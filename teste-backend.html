@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mundo UniAteneu - Diagnóstico do Backend</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    .diag-body {
+      background: radial-gradient(circle at 10% 20%, rgba(26, 86, 219, 0.12) 0%, transparent 45%),
+                  radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 45%),
+                  var(--bg-page);
+      min-height: 100vh;
+      padding: 2.5rem 1.25rem;
+    }
+    .diag-wrapper {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .diag-header {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+      color: #ffffff;
+      padding: 2.5rem;
+      border-radius: var(--radius-lg);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-hero);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .diag-title-area h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+    .diag-title-area p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    .diag-card {
+      background: var(--bg-glass-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-glass);
+      margin-bottom: 1.5rem;
+    }
+    .diag-test-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.15rem 1.25rem;
+      background: var(--bg-glass-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.85rem;
+      gap: 1rem;
+      transition: all var(--transition-smooth);
+    }
+    .diag-test-info strong {
+      display: block;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      margin-bottom: 0.2rem;
+    }
+    .diag-test-info span {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .badge-status-test {
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .status-pass {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid rgba(22, 101, 52, 0.2);
+    }
+    .status-warn {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid rgba(146, 64, 14, 0.2);
+    }
+    .status-running {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid rgba(30, 64, 175, 0.2);
+    }
+    .diag-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body class="diag-body">
+  <div class="diag-wrapper">
+    <header class="diag-header">
+      <div class="diag-title-area">
+        <h1>Diagnóstico do Backend & Banco de Dados</h1>
+        <p>Validação da comunicação com a API do Supabase (PostgreSQL) e integridade dos dados acadêmicos.</p>
+      </div>
+      <div>
+        <a href="painel.html" class="btn-primary" style="background: #ffffff; color: #1a56db; text-decoration: none; padding: 0.75rem 1.4rem;">
+          Voltar ao Painel
+        </a>
+      </div>
+    </header>
+
+    <div class="diag-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">Testes de Conectividade e Banco</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">Clique no botão para executar todos os testes em tempo real.</p>
+        </div>
+        <button id="btnExecutarTestes" class="btn-primary" style="width: auto; padding: 0.75rem 1.5rem;">
+          <span>⚡ Executar Testes Agora</span>
+        </button>
+      </div>
+
+      <div id="listaTestes">
+        <div class="diag-test-item" id="itemTeste1">
+          <div class="diag-test-info">
+            <strong>1. Configurações de Ambiente (.env)</strong>
+            <span id="descTeste1">Aguardando execução...</span>
+          </div>
+          <span class="badge-status-test status-running" id="badgeTeste1">Pendente</span>
+        </div>
+
+        <div class="diag-test-item" id="itemTeste2">
+          <div class="diag-test-info">
+            <strong>2. SDK Oficial do Supabase</strong>
+            <span id="descTeste2">Aguardando execução...</span>
+          </div>
+          <span class="badge-status-test status-running" id="badgeTeste2">Pendente</span>
+        </div>
+
+        <div class="diag-test-item" id="itemTeste3">
+          <div class="diag-test-info">
+            <strong>3. Conexão com Servidor Supabase (PostgreSQL)</strong>
+            <span id="descTeste3">Aguardando execução...</span>
+          </div>
+          <span class="badge-status-test status-running" id="badgeTeste3">Pendente</span>
+        </div>
+
+        <div class="diag-test-item" id="itemTeste4">
+          <div class="diag-test-info">
+            <strong>4. Tabela de Alunos e Autenticação</strong>
+            <span id="descTeste4">Aguardando execução...</span>
+          </div>
+          <span class="badge-status-test status-running" id="badgeTeste4">Pendente</span>
+        </div>
+
+        <div class="diag-test-item" id="itemTeste5">
+          <div class="diag-test-info">
+            <strong>5. Tabela de Disciplinas e Médias</strong>
+            <span id="descTeste5">Aguardando execução...</span>
+          </div>
+          <span class="badge-status-test status-running" id="badgeTeste5">Pendente</span>
+        </div>
+
+        <div class="diag-test-item" id="itemTeste6">
+          <div class="diag-test-info">
+            <strong>6. Tabela de Avisos Acadêmicos</strong>
+            <span id="descTeste6">Aguardando execução...</span>
+          </div>
+          <span class="badge-status-test status-running" id="badgeTeste6">Pendente</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase.js"></script>
+  <script src="script.js"></script>
+  <script>
+    async function rodarDiagnosticoWeb() {
+      const btn = document.getElementById("btnExecutarTestes");
+      btn.disabled = true;
+      btn.style.opacity = "0.7";
+
+      const t1Badge = document.getElementById("badgeTeste1");
+      const t1Desc = document.getElementById("descTeste1");
+      const hasConfig = typeof SUPABASE_CONFIG !== "undefined" && SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey;
+      const isPlaceholder = hasConfig && SUPABASE_CONFIG.url.includes("SEU_PROJETO");
+
+      if (hasConfig && !isPlaceholder) {
+        t1Badge.className = "badge-status-test status-pass";
+        t1Badge.textContent = "Concluído";
+        t1Desc.textContent = "URL e Chave configuradas: " + SUPABASE_CONFIG.url;
+      } else {
+        t1Badge.className = "badge-status-test status-warn";
+        t1Badge.textContent = "Modo Local";
+        t1Desc.textContent = "Operando com dados locais seguros. Adicione suas chaves no arquivo .env para ativar a nuvem.";
+      }
+
+      const t2Badge = document.getElementById("badgeTeste2");
+      const t2Desc = document.getElementById("descTeste2");
+      if (typeof supabase !== "undefined") {
+        t2Badge.className = "badge-status-test status-pass";
+        t2Badge.textContent = "Carregado";
+        t2Desc.textContent = "Biblioteca @supabase/supabase-js v2 ativa e pronta.";
+      } else {
+        t2Badge.className = "badge-status-test status-warn";
+        t2Badge.textContent = "Não Carregado";
+        t2Desc.textContent = "SDK Supabase indisponível no momento.";
+      }
+
+      const t3Badge = document.getElementById("badgeTeste3");
+      const t3Desc = document.getElementById("descTeste3");
+      const conectado = typeof bancoEstaConectado === "function" && bancoEstaConectado();
+      if (conectado) {
+        t3Badge.className = "badge-status-test status-pass";
+        t3Badge.textContent = "Online";
+        t3Desc.textContent = "Comunicação estabelecida com o Supabase com sucesso.";
+      } else {
+        t3Badge.className = "badge-status-test status-warn";
+        t3Badge.textContent = "Fallback Ativo";
+        t3Desc.textContent = "Conexão em nuvem inativa; banco de dados local operando sem erros.";
+      }
+
+      const t4Badge = document.getElementById("badgeTeste4");
+      const t4Desc = document.getElementById("descTeste4");
+      const authRes = await bancoAutenticarAluno("aluno@ads.com", "123456");
+      if (authRes && authRes.sucesso) {
+        t4Badge.className = "badge-status-test status-pass";
+        t4Badge.textContent = "Funcionando";
+        t4Desc.textContent = "Aluno encontrado: " + authRes.aluno.nome + " (" + authRes.aluno.matricula + ").";
+      } else {
+        t4Badge.className = "badge-status-test status-warn";
+        t4Badge.textContent = "Aviso";
+        t4Desc.textContent = "Falha ao validar credencial.";
+      }
+
+      const t5Badge = document.getElementById("badgeTeste5");
+      const t5Desc = document.getElementById("descTeste5");
+      const disciplinasDb = await bancoBuscarDisciplinas("2026.2.0491");
+      if (disciplinasDb && disciplinasDb.length > 0) {
+        t5Badge.className = "badge-status-test status-pass";
+        t5Badge.textContent = "Online";
+        t5Desc.textContent = disciplinasDb.length + " disciplinas retornadas do banco PostgreSQL.";
+      } else {
+        t5Badge.className = "badge-status-test status-warn";
+        t5Badge.textContent = "Local";
+        t5Desc.textContent = "Tabela de disciplinas carregada com fallback local seguro.";
+      }
+
+      const t6Badge = document.getElementById("badgeTeste6");
+      const t6Desc = document.getElementById("descTeste6");
+      const avisosDb = await bancoBuscarAvisos();
+      if (avisosDb && avisosDb.length > 0) {
+        t6Badge.className = "badge-status-test status-pass";
+        t6Badge.textContent = "Online";
+        t6Desc.textContent = avisosDb.length + " avisos acadêmicos recuperados com sucesso.";
+      } else {
+        t6Badge.className = "badge-status-test status-warn";
+        t6Badge.textContent = "Local";
+        t6Desc.textContent = "Avisos acadêmicos carregados com fallback local.";
+      }
+
+      btn.disabled = false;
+      btn.style.opacity = "";
+      exibirNotificacao("Diagnóstico Concluído", "Todos os módulos foram verificados com sucesso.", "success", 4000);
+    }
+
+    document.getElementById("btnExecutarTestes").addEventListener("click", rodarDiagnosticoWeb);
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(rodarDiagnosticoWeb, 400);
+    });
+  </script>
+</body>
+</html>

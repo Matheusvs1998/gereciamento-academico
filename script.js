@@ -121,7 +121,7 @@ function configurarTelaLogin() {
     });
   }
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const identificador = inputEmail.value.trim();
@@ -132,15 +132,45 @@ function configurarTelaLogin() {
       return;
     }
 
-    const loginValido = (identificador === "aluno@ads.com" || identificador === "123.456.789-00" || identificador === "aluno") && senha === "123456";
+    const btnSubmit = form.querySelector('button[type="submit"]');
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.style.opacity = "0.7";
+    }
 
-    if (loginValido) {
-      
+    let autenticado = false;
+    let dadosAluno = null;
+
+    if (typeof bancoAutenticarAluno === "function") {
+      const resultado = await bancoAutenticarAluno(identificador, senha);
+      if (resultado.sucesso) {
+        autenticado = true;
+        dadosAluno = resultado.aluno;
+      }
+    } else {
+      const loginValido = (identificador === "aluno@ads.com" || identificador === "123.456.789-00" || identificador === "aluno") && senha === "123456";
+      if (loginValido) {
+        autenticado = true;
+        dadosAluno = {
+          nome: "Maria Eduarda",
+          matricula: "2026.2.0491",
+          curso: "Análise e Desenvolvimento de Sistemas",
+          campus: "Campus Grand Shopping"
+        };
+      }
+    }
+
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      btnSubmit.style.opacity = "";
+    }
+
+    if (autenticado && dadosAluno) {
       localStorage.setItem("aluno_autenticado", "true");
-      localStorage.setItem("aluno_nome", "Maria Eduarda");
-      localStorage.setItem("aluno_matricula", "2026.2.0491");
-      localStorage.setItem("aluno_curso", "Análise e Desenvolvimento de Sistemas");
-      localStorage.setItem("aluno_campus", "Campus Grand Shopping");
+      localStorage.setItem("aluno_nome", dadosAluno.nome || "Maria Eduarda");
+      localStorage.setItem("aluno_matricula", dadosAluno.matricula || "2026.2.0491");
+      localStorage.setItem("aluno_curso", dadosAluno.curso || "Análise e Desenvolvimento de Sistemas");
+      localStorage.setItem("aluno_campus", dadosAluno.campus || "Campus Grand Shopping");
 
       window.location.href = "painel.html";
     } else {
@@ -423,8 +453,32 @@ function renderizarTabelaDisciplinas() {
   }
 }
 
-function inicializarDisciplinas() {
+async function inicializarDisciplinas() {
   renderizarTabelaDisciplinas();
+
+  if (typeof bancoBuscarDisciplinas === "function") {
+    const matricula = localStorage.getItem("aluno_matricula") || "2026.2.0491";
+    const disciplinasDb = await bancoBuscarDisciplinas(matricula);
+    if (disciplinasDb && disciplinasDb.length > 0) {
+      salvarDisciplinas(disciplinasDb);
+    }
+  }
+
+  if (typeof bancoBuscarAvisos === "function") {
+    const avisosDb = await bancoBuscarAvisos();
+    if (avisosDb && avisosDb.length > 0) {
+      renderizarAvisosUniAteneu(avisosDb);
+    }
+  }
+
+  if (typeof bancoEstaConectado === "function" && bancoEstaConectado()) {
+    exibirNotificacao(
+      "Banco Conectado",
+      "Sincronização em tempo real ativa com o Supabase (PostgreSQL).",
+      "success",
+      4000
+    );
+  }
 }
 
 function configurarFiltros() {
@@ -489,17 +543,24 @@ function configurarModalDisciplina() {
       return;
     }
 
-    const lista = obterDisciplinas();
-    lista.push({
+    const novaDisciplina = {
       id: Date.now(),
+      aluno_matricula: localStorage.getItem("aluno_matricula") || "2026.2.0491",
       nome,
       professor,
       nota1,
       nota2,
       frequencia
-    });
+    };
 
+    const lista = obterDisciplinas();
+    lista.push(novaDisciplina);
     salvarDisciplinas(lista);
+
+    if (typeof bancoAdicionarDisciplina === "function") {
+      bancoAdicionarDisciplina(novaDisciplina);
+    }
+
     fechar();
 
     exibirNotificacao(
@@ -538,14 +599,16 @@ const AVISOS_UNIATENEU = [
   }
 ];
 
-function renderizarAvisosUniAteneu() {
+function renderizarAvisosUniAteneu(avisosCustom = null) {
   const container = document.getElementById("listaAvisos");
   const statAvisos = document.getElementById("statAvisos");
 
   if (!container) return;
 
+  const lista = avisosCustom && avisosCustom.length > 0 ? avisosCustom : AVISOS_UNIATENEU;
+
   container.innerHTML = "";
-  AVISOS_UNIATENEU.forEach(aviso => {
+  lista.forEach(aviso => {
     const item = document.createElement("article");
     item.className = `notice-card ${aviso.tipo === "urgente" ? "urgente" : ""}`;
     item.innerHTML = `

@@ -4,8 +4,10 @@
   "description": "Sistema de Gerenciamento Acadêmico - Centro Universitário UniAteneu (Interface Homem-Máquina)",
   "main": "index.html",
   "scripts": {
-    "start": "serve .",
-    "dev": "live-server --port=3000 --entry-file=index.html"
+    "sync-env": "node sync-env.js",
+    "test": "node test-backend.js",
+    "start": "node sync-env.js && serve .",
+    "dev": "node sync-env.js && live-server --port=3000 --entry-file=index.html"
   },
   "keywords": [
     "uniateneu",
