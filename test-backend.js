@@ -76,7 +76,9 @@ async function executarTestes() {
     jsFuncoes = code.includes('bancoAutenticarAluno') && 
                 code.includes('bancoBuscarDisciplinas') && 
                 code.includes('bancoAdicionarDisciplina') && 
-                code.includes('bancoBuscarAvisos');
+                code.includes('bancoBuscarAvisos') &&
+                code.includes('escutarMudancasDisciplinas') &&
+                code.includes('escutarMudancasAvisos');
   }
 
   registrar(

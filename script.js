@@ -399,7 +399,7 @@ function renderizarTabelaDisciplinas() {
   if (filtradas.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
           Nenhuma disciplina encontrada para o filtro informado.
         </td>
       </tr>
@@ -437,6 +437,11 @@ function renderizarTabelaDisciplinas() {
         <td class="text-center"><strong>${Number(item.nota2).toFixed(1)}</strong></td>
         <td class="text-center"><strong style="color: var(--ateneu-blue);">${media}</strong></td>
         <td class="text-center"><span class="badge-status ${statusClass}">${statusTexto}</span></td>
+        <td class="text-center">
+          <button type="button" class="btn-excluir-disciplina" onclick="removerDisciplina(${item.id})" title="Remover matéria" aria-label="Remover matéria">
+            🗑️
+          </button>
+        </td>
       `;
       tbody.appendChild(tr);
     });
@@ -452,6 +457,26 @@ function renderizarTabelaDisciplinas() {
     statPresenca.textContent = `${mediaPresenca}%`;
   }
 }
+
+async function removerDisciplina(id) {
+  const lista = obterDisciplinas();
+  const disc = lista.find(d => Number(d.id) === Number(id));
+  const nomeDisc = disc ? disc.nome : "disciplina";
+
+  const confirmou = confirm(`Deseja realmente remover a matéria "${nomeDisc}"? A alteração será sincronizada no banco de dados.`);
+  if (!confirmou) return;
+
+  const novaLista = lista.filter(d => Number(d.id) !== Number(id));
+  salvarDisciplinas(novaLista);
+
+  if (typeof bancoRemoverDisciplina === "function") {
+    await bancoRemoverDisciplina(id);
+  }
+
+  exibirNotificacao("Matéria Removida", `A matéria "${nomeDisc}" foi excluída do sistema e do banco de dados.`, "warning", 4000);
+}
+
+window.removerDisciplina = removerDisciplina;
 
 async function inicializarDisciplinas() {
   renderizarTabelaDisciplinas();
@@ -469,6 +494,65 @@ async function inicializarDisciplinas() {
     if (avisosDb && avisosDb.length > 0) {
       renderizarAvisosUniAteneu(avisosDb);
     }
+  }
+
+  if (typeof escutarMudancasDisciplinas === "function") {
+    escutarMudancasDisciplinas((dadosAtualizados, payload) => {
+      if (dadosAtualizados && dadosAtualizados.length > 0) {
+        salvarDisciplinas(dadosAtualizados);
+      } else if (payload && payload.eventType === "DELETE") {
+        const idRemovido = payload.old ? payload.old.id : null;
+        if (idRemovido) {
+          const listaAtual = obterDisciplinas().filter(d => Number(d.id) !== Number(idRemovido));
+          salvarDisciplinas(listaAtual);
+        }
+      }
+
+      let msg = "A grade curricular foi sincronizada em tempo real com o banco de dados.";
+      let tipo = "info";
+      if (payload) {
+        if (payload.eventType === "INSERT") {
+          msg = `Nova disciplina "${payload.new ? payload.new.nome : "Adicionada"}" inserida no banco em tempo real.`;
+          tipo = "success";
+        } else if (payload.eventType === "UPDATE") {
+          msg = `Disciplina "${payload.new ? payload.new.nome : "Alterada"}" teve notas/dados modificados no banco.`;
+          tipo = "info";
+        } else if (payload.eventType === "DELETE") {
+          msg = "Uma disciplina foi removida diretamente no banco de dados.";
+          tipo = "warning";
+        }
+      }
+      exibirNotificacao("Banco em Tempo Real", msg, tipo, 4500);
+    });
+  }
+
+  if (typeof escutarMudancasAvisos === "function") {
+    escutarMudancasAvisos((dadosAtualizados, payload) => {
+      if (dadosAtualizados && dadosAtualizados.length > 0) {
+        renderizarAvisosUniAteneu(dadosAtualizados);
+      }
+      let msg = "Mural de avisos atualizado em tempo real pelo banco de dados.";
+      if (payload && payload.new && payload.new.titulo) {
+        msg = `Novo comunicado publicado: "${payload.new.titulo}".`;
+      }
+      exibirNotificacao("Aviso Acadêmico", msg, "info", 4500);
+    });
+  }
+
+  const matricula = localStorage.getItem("aluno_matricula") || "2026.2.0491";
+  if (typeof escutarMudancasAluno === "function") {
+    escutarMudancasAluno(matricula, (alunoAtualizado) => {
+      if (alunoAtualizado && alunoAtualizado.nome) {
+        localStorage.setItem("aluno_nome", alunoAtualizado.nome);
+        const elNome = document.getElementById("nomeEstudante");
+        const elBoasVindas = document.getElementById("nomeBoasVindas");
+        const elAvatar = document.getElementById("avatarInicial");
+        if (elNome) elNome.textContent = alunoAtualizado.nome;
+        if (elBoasVindas) elBoasVindas.textContent = alunoAtualizado.nome.split(" ")[0];
+        if (elAvatar) elAvatar.textContent = alunoAtualizado.nome.charAt(0).toUpperCase();
+        exibirNotificacao("Cadastro Acadêmico", "Seus dados de estudante foram atualizados no banco de dados.", "success", 4000);
+      }
+    });
   }
 
   if (typeof bancoEstaConectado === "function" && bancoEstaConectado()) {
@@ -524,7 +608,7 @@ function configurarModalDisciplina() {
     if (e.target === modal) fechar();
   });
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const nome = document.getElementById("nomeDisciplinaInput").value.trim();
@@ -553,19 +637,25 @@ function configurarModalDisciplina() {
       frequencia
     };
 
-    const lista = obterDisciplinas();
-    lista.push(novaDisciplina);
-    salvarDisciplinas(lista);
-
     if (typeof bancoAdicionarDisciplina === "function") {
-      bancoAdicionarDisciplina(novaDisciplina);
+      const resultadoDb = await bancoAdicionarDisciplina(novaDisciplina);
+      if (resultadoDb && resultadoDb.id) {
+        novaDisciplina.id = resultadoDb.id;
+      }
+    }
+
+    const lista = obterDisciplinas();
+    const jaExiste = lista.some(d => d.id === novaDisciplina.id);
+    if (!jaExiste) {
+      lista.push(novaDisciplina);
+      salvarDisciplinas(lista);
     }
 
     fechar();
 
     exibirNotificacao(
       "Disciplina Cadastrada!",
-      `A matéria "${nome}" foi incluída na sua grade curricular com sucesso.`,
+      `A matéria "${nome}" foi incluída na sua grade curricular e sincronizada no banco de dados.`,
       "success",
       4500
     );

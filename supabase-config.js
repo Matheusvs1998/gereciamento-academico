@@ -1,4 +1,4 @@
 const SUPABASE_CONFIG = {
-  url: "https://SEU_PROJETO.supabase.co",
-  anonKey: "SUA_CHAVE_ANON_AQUI"
+  url: "https://gwqtjfplefjysjdkfjyi.supabase.co",
+  anonKey: "sb_publishable_JCy_kQtd54fmsAZuJF08bw_LwzMnXsp"
 };

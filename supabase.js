@@ -7,7 +7,13 @@ function obterClienteSupabase() {
     const { url, anonKey } = SUPABASE_CONFIG;
     if (url && anonKey && url.startsWith("http") && !url.includes("SEU_PROJETO")) {
       try {
-        clienteSupabase = supabase.createClient(url, anonKey);
+        clienteSupabase = supabase.createClient(url, anonKey, {
+          realtime: {
+            params: {
+              eventsPerSecond: 10
+            }
+          }
+        });
         return clienteSupabase;
       } catch (e) {
         return null;
@@ -127,6 +133,47 @@ async function bancoAdicionarDisciplina(disciplina) {
   }
 }
 
+async function bancoAtualizarDisciplina(id, campos) {
+  const db = obterClienteSupabase();
+  if (!db) {
+    return null;
+  }
+
+  try {
+    const { data, error } = await db
+      .from("disciplinas")
+      .update(campos)
+      .eq("id", id)
+      .select();
+
+    if (error) {
+      return null;
+    }
+
+    return data && data[0] ? data[0] : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function bancoRemoverDisciplina(id) {
+  const db = obterClienteSupabase();
+  if (!db) {
+    return false;
+  }
+
+  try {
+    const { error } = await db
+      .from("disciplinas")
+      .delete()
+      .eq("id", id);
+
+    return !error;
+  } catch (e) {
+    return false;
+  }
+}
+
 async function bancoBuscarAvisos() {
   const db = obterClienteSupabase();
   if (!db) {
@@ -149,8 +196,100 @@ async function bancoBuscarAvisos() {
   }
 }
 
+let canalDisciplinas = null;
+function escutarMudancasDisciplinas(aoMudar) {
+  const db = obterClienteSupabase();
+  if (!db) return null;
+
+  if (canalDisciplinas) {
+    canalDisciplinas.unsubscribe();
+  }
+
+  canalDisciplinas = db
+    .channel("canal-realtime-disciplinas")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "disciplinas" },
+      async (payload) => {
+        const dadosAtualizados = await bancoBuscarDisciplinas();
+        if (typeof aoMudar === "function") {
+          aoMudar(dadosAtualizados, payload);
+        }
+      }
+    )
+    .subscribe((status) => {
+      if (status === "SUBSCRIBED") {
+        window.dispatchEvent(new CustomEvent("supabase:realtime:disciplinas", { detail: { status: "conectado" } }));
+      }
+    });
+
+  return canalDisciplinas;
+}
+
+let canalAvisos = null;
+function escutarMudancasAvisos(aoMudar) {
+  const db = obterClienteSupabase();
+  if (!db) return null;
+
+  if (canalAvisos) {
+    canalAvisos.unsubscribe();
+  }
+
+  canalAvisos = db
+    .channel("canal-realtime-avisos")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "avisos" },
+      async (payload) => {
+        const dadosAtualizados = await bancoBuscarAvisos();
+        if (typeof aoMudar === "function") {
+          aoMudar(dadosAtualizados, payload);
+        }
+      }
+    )
+    .subscribe((status) => {
+      if (status === "SUBSCRIBED") {
+        window.dispatchEvent(new CustomEvent("supabase:realtime:avisos", { detail: { status: "conectado" } }));
+      }
+    });
+
+  return canalAvisos;
+}
+
+let canalAluno = null;
+function escutarMudancasAluno(matricula, aoMudar) {
+  const db = obterClienteSupabase();
+  if (!db) return null;
+
+  if (canalAluno) {
+    canalAluno.unsubscribe();
+  }
+
+  canalAluno = db
+    .channel("canal-realtime-aluno")
+    .on(
+      "postgres_changes",
+      { event: "UPDATE", schema: "public", table: "alunos" },
+      (payload) => {
+        if (payload && payload.new && payload.new.matricula === matricula) {
+          if (typeof aoMudar === "function") {
+            aoMudar(payload.new, payload);
+          }
+        }
+      }
+    )
+    .subscribe();
+
+  return canalAluno;
+}
+
 window.bancoEstaConectado = bancoEstaConectado;
 window.bancoAutenticarAluno = bancoAutenticarAluno;
 window.bancoBuscarDisciplinas = bancoBuscarDisciplinas;
 window.bancoAdicionarDisciplina = bancoAdicionarDisciplina;
+window.bancoAtualizarDisciplina = bancoAtualizarDisciplina;
+window.bancoRemoverDisciplina = bancoRemoverDisciplina;
 window.bancoBuscarAvisos = bancoBuscarAvisos;
+window.escutarMudancasDisciplinas = escutarMudancasDisciplinas;
+window.escutarMudancasAvisos = escutarMudancasAvisos;
+window.escutarMudancasAluno = escutarMudancasAluno;

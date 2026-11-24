@@ -68,3 +68,7 @@ insert into avisos (titulo, texto, tag, tipo, data) values
 ('Renovação e Matrícula 2027.1', 'O período oficial de rematrícula para alunos veteranos dos cursos de TI e ADS iniciará no dia 01 de Dezembro com condições exclusivas.', 'Secretaria', 'padrao', 'Ontem, 16:45'),
 ('Semana de Tecnologia e Inovação', 'Inscrições abertas para workshops presenciais de Cloud Computing, Inteligência Artificial e UX Design.', 'Evento', 'padrao', '22 Nov, 14:00')
 on conflict do nothing;
+
+alter publication supabase_realtime add table disciplinas;
+alter publication supabase_realtime add table avisos;
+alter publication supabase_realtime add table alunos;
