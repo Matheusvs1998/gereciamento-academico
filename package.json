@@ -1,0 +1,22 @@
+{
+  "name": "sistema-de-gerenciamento-academico",
+  "version": "1.0.0",
+  "description": "Sistema de Gerenciamento Acadêmico - Centro Universitário UniAteneu (Interface Homem-Máquina)",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "dev": "live-server --port=3000 --entry-file=index.html"
+  },
+  "keywords": [
+    "uniateneu",
+    "ihm",
+    "sistema-academico",
+    "portal-aluno"
+  ],
+  "author": "Equipe ADS UniAteneu",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.8"
+  }
+}

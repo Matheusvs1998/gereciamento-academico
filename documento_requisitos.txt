@@ -1,0 +1,108 @@
+﻿ATIVIDADE PRÁTICA • ANÁLISE E DESENVOLVIMENTO DE SISTEMAS
+eFD a        ATIVIDADE PRÁTICA
+Sistema de
+Gerenciamento Acadêmico
+Da ideia ao protótipo; do protótipo à aplicação web
+Disciplina
+Interface Homem-Máquina (IHM)
+	Curso / turma
+Análise e Desenvolvimento de Sistemas – 2º semestre
+	Tecnologias
+Figma, HTML, CSS e JavaScript
+	Tempo sugerido
+2 a 3 horas
+	1. Objetivo da atividade
+Planejar e desenvolver uma aplicação web simples para um sistema acadêmico, aplicando princípios básicos de design de interface, usabilidade e interação com o usuário. A atividade integra o protótipo no Figma à implementação com HTML, CSS e JavaScript.
+2. Situação-problema
+Uma instituição de ensino deseja modernizar seu sistema acadêmico. Os estudantes precisam de uma interface simples e intuitiva para acessar sua conta, consultar disciplinas, visualizar notas e acompanhar avisos. Sua equipe foi convidada a criar a primeira versão dessa aplicação.
+3. Etapa 1 – Planejamento da interface no Figma
+Antes de programar, a equipe deverá elaborar um protótipo com, no mínimo, duas telas:
+* Tela de login: campo de e-mail, campo de senha e botão de acesso.
+* Painel do aluno: identificação do estudante, disciplinas, notas e avisos acadêmicos.
+Durante o planejamento, considerem:
+* As informações estão organizadas de maneira clara?
+* Os botões são fáceis de identificar?
+* As cores apresentam contraste adequado?
+* O usuário consegue entender o que deve fazer?
+* A navegação entre as telas é intuitiva?
+4. Etapa 2 – Estruturação com HTML
+Transformem o protótipo em páginas web. Organizem os arquivos do projeto da seguinte forma:
+sistema-academico/
+├── index.html
+├── painel.html
+├── style.css
+└── script.js
+O arquivo index.html deverá conter a tela de login. O painel.html deverá apresentar as informações acadêmicas. O arquivo style.css concentrará a estilização e o script.js conterá as interações implementadas com JavaScript.
+5. Etapa 3 – Estilização com CSS
+A aplicação deverá aproximar-se do protótipo criado no Figma. Trabalhem:
+* Cores e identidade visual;
+* Tipografia e hierarquia das informações;
+* Espaçamentos, alinhamentos, bordas e sombras;
+* Organização dos elementos nas duas telas;
+* Responsividade básica para diferentes tamanhos de tela.
+6. Etapa 4 – Interatividade com JavaScript
+Implementem as seguintes funcionalidades:
+* Validar se os campos de e-mail e senha foram preenchidos;
+* Permitir mostrar e ocultar a senha;
+* Verificar credenciais de demonstração;
+* Exibir o nome do estudante no painel;
+* Permitir sair do sistema e retornar à tela de login.
+Exemplo de validação simplificada para a tela de login:
+const formulario = document.getElementById("loginForm");
+
+formulario.addEventListener("submit", function(event) {
+   event.preventDefault();
+
+   const email = document.getElementById("email").value;
+   const senha = document.getElementById("senha").value;
+
+   if (email === "aluno@ads.com" && senha === "123456") {
+       localStorage.setItem("aluno", "Maria");
+       window.location.href = "painel.html";
+   } else {
+       alert("E-mail ou senha incorretos!");
+   }
+});
+Atenção: essa autenticação é apenas uma simulação didática no navegador. Não representa um mecanismo seguro de autenticação para sistemas reais.
+7. Desafio complementar
+Após concluir as funcionalidades principais, escolham pelo menos uma melhoria para implementar:
+* Adicionar um botão para alternar entre tema claro e escuro;
+* Exibir uma mensagem de boas-vindas personalizada;
+* Criar uma lista de disciplinas;
+* Criar um formulário para cadastrar uma nova disciplina;
+* Criar uma área de avisos atualizada com JavaScript.
+8. Critérios de avaliação
+Critério
+	O que será observado
+	Pontos
+	Planejamento no Figma
+	Organização, clareza e coerência do protótipo.
+	2,0
+	Estrutura HTML
+	Uso adequado dos elementos e organização das páginas.
+	2,0
+	CSS e identidade visual
+	Estilização, consistência e responsividade básica.
+	2,0
+	JavaScript
+	Validação e funcionamento das interações.
+	2,0
+	Usabilidade e experiência
+	Facilidade de navegação e clareza para o usuário.
+	2,0
+	TOTAL
+	
+
+	10,0
+	9. Apresentação e reflexão
+Ao final, cada dupla deverá apresentar sua aplicação e explicar as principais decisões de design e usabilidade. Considerem as perguntas abaixo:
+* O usuário identifica facilmente onde deve clicar?
+* A interface apresenta mensagens claras quando ocorre um erro?
+* Existe consistência visual entre as telas?
+* A aplicação pode ser utilizada em um celular?
+* Uma pessoa que nunca utilizou o sistema conseguiria navegar por ele?
+10. Entrega
+Entreguem o link do protótipo no Figma e a pasta do projeto contendo os arquivos HTML, CSS e JavaScript. A aplicação deverá ser apresentada funcionando no navegador.
+Integrantes: ____________________________________________________________
+Data: 30 / 11 /2026
+Interface Homem-Máquina | Projeto de aplicação web

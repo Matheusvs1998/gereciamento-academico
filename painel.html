@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro Universitário UniAteneu - Portal Acadêmico</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="pabna-style-body">
+
+  <header class="pabna-navbar-wrapper">
+    <div class="pabna-navbar">
+      
+      <a href="painel.html" class="pabna-brand">
+        <div class="pabna-logo-badge">
+          <img src="assets/logo-uniateneu.png" alt="UniAteneu" class="brand-img">
+        </div>
+        <div class="pabna-brand-info">
+          <span class="pabna-brand-title">Centro Universitário UniAteneu</span>
+          <span class="pabna-brand-motto">Aprender • Crescer • Vencer</span>
+        </div>
+      </a>
+
+      <nav class="pabna-nav-links">
+        <a href="#heroSecao" class="nav-link active">Início</a>
+        <a href="#disciplinasSecao" class="nav-link">Disciplinas</a>
+        <a href="#campusSecao" class="nav-link">Sobre o Curso</a>
+        <a href="#avisosSecao" class="nav-link">Avisos</a>
+        <a href="javascript:void(0)" onclick="exibirAvisoServico('Secretaria Online')" class="nav-link">Secretaria</a>
+        <a href="javascript:void(0)" onclick="exibirAvisoServico('AVA Blackboard')" class="nav-link">AVA</a>
+      </nav>
+
+      <div class="pabna-nav-actions">
+        <button id="btnTema" class="pabna-icon-btn" title="Alternar Modo Claro / Escuro" aria-label="Alternar Tema">
+          <span id="iconeTema">🌙</span>
+        </button>
+
+        <div class="pabna-user-pill">
+          <div class="pabna-avatar" id="avatarInicial">M</div>
+          <div class="pabna-user-meta">
+            <span class="pabna-salutation" id="saudacaoHora">Olá,</span>
+            <strong class="pabna-user-name" id="nomeEstudante">Maria Eduarda</strong>
+          </div>
+        </div>
+
+        <button id="btnSair" class="pabna-cta-btn" title="Encerrar sessão">
+          <span>Sair</span>
+          <span class="cta-arrow">→</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <section class="pabna-hero-section" id="heroSecao">
+    <div class="bokeh-orb orb-left"></div>
+    <div class="bokeh-orb orb-right"></div>
+    <div class="bokeh-orb orb-center"></div>
+
+    <div class="pabna-hero-container">
+      
+      <div class="pabna-hero-content">
+        <div class="pabna-welcome-pill">
+          <span class="pill-icon">🎓</span>
+          <span>Bem-vinda ao Portal Acadêmico UniAteneu</span>
+        </div>
+
+        <h1 class="pabna-hero-headline">
+          Educação Superior para um <span>Futuro Brilhante</span>
+        </h1>
+
+        <p class="pabna-hero-description">
+          No Centro Universitário UniAteneu, impulsionamos o potencial dos nossos alunos com ensino de excelência e vivência prática.
+        </p>
+
+        <div class="pabna-hero-buttons">
+          <a href="#disciplinasSecao" class="btn-pabna-primary">
+            <span>Acessar Disciplinas</span>
+            <span class="btn-arrow">→</span>
+          </a>
+          <button type="button" class="btn-pabna-video" onclick="exibirAvisoServico('Ambiente Virtual de Aprendizagem (AVA)')">
+            <span class="video-play-icon">▶</span>
+            <span>Acessar AVA Virtual</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="pabna-hero-media">
+        <div class="hero-image-frame">
+          <img src="assets/aluno-uniateneu.png?v=5" alt="Estudante UniAteneu Propaganda" class="pabna-student-photo">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="pabna-features-section">
+    <div class="pabna-container">
+      <div class="floating-cards-grid">
+        
+        <div class="feature-glass-card" onclick="document.getElementById('disciplinasSecao').scrollIntoView({behavior:'smooth'})">
+          <div class="feature-card-icon icon-blue">
+            <span>📖</span>
+          </div>
+          <div class="feature-card-content">
+            <h4>Excelência Acadêmica</h4>
+            <p>Boletim de notas, NP1, NP2 e médias finais em tempo real.</p>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+
+        <div class="feature-glass-card" onclick="exibirNotificacao('Corpo Docente', 'Professores mestres e doutores com atuação de destaque no mercado de TI.', 'info')">
+          <div class="feature-card-icon icon-teal">
+            <span>👥</span>
+          </div>
+          <div class="feature-card-content">
+            <h4>Professores Qualificados</h4>
+            <p>Aprenda com mestres e doutores com vivência de mercado.</p>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+
+        <div class="feature-glass-card" onclick="exibirNotificacao('Frequência Geral', 'Sua taxa de presença está em 94%, bem acima do mínimo de 75%. Parabéns!', 'success')">
+          <div class="feature-card-icon icon-amber">
+            <span>🏆</span>
+          </div>
+          <div class="feature-card-content">
+            <h4>Frequência & Sucesso</h4>
+            <p>Orgulho dos nossos alunos: acompanhamento de presenças.</p>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+
+        <div class="feature-glass-card" onclick="exibirAvisoServico('Salas & Laboratórios')">
+          <div class="feature-card-icon icon-purple">
+            <span>🏛️</span>
+          </div>
+          <div class="feature-card-content">
+            <h4>Instalações Modernas</h4>
+            <p>Laboratórios de ponta, biblioteca física e acervo digital.</p>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="pabna-middle-section" id="campusSecao">
+    <div class="pabna-container">
+      <div class="middle-grid">
+        
+        <div class="campus-showcase-card">
+          <div class="campus-img-wrap">
+            <img src="assets/campus-uniateneu.jpg" alt="Campus UniAteneu" class="campus-photo">
+            <div class="location-badge">
+              <span class="loc-pin">📍</span>
+              <span> UniAteneu – Unidade Harmony (Bezerra de Menezes)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="middle-about-content">
+          <span class="section-tag-pill">SOBRE O NOSSO CURSO</span>
+          <h2 class="section-big-title">Construindo Carreiras Através da Educação</h2>
+          <p class="section-text">
+            O curso de <strong>Análise e Desenvolvimento de Sistemas</strong> da UniAteneu é comprometido em formar profissionais inovadores, capacitados a criar soluções modernas, acessíveis e centradas no ser humano. Nosso objetivo é preparar estudantes confiantes e altamente disputados pelo mercado tecnológico.
+          </p>
+          <div class="middle-actions">
+            <button type="button" class="btn-pabna-primary" onclick="exibirAvisoServico('Grade Curricular Completa de ADS')">
+              <span>Grade do Curso</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="middle-stats-column">
+          
+          <div class="stat-row-card">
+            <div class="stat-icon-wrap stat-calendar">📅</div>
+            <div class="stat-info">
+              <strong>20+ Anos</strong>
+              <span>Tradição e excelência acadêmica</span>
+            </div>
+          </div>
+
+          <div class="stat-row-card">
+            <div class="stat-icon-wrap stat-students">👥</div>
+            <div class="stat-info">
+              <strong id="statPresenca">94%</strong>
+              <span>Frequência geral nas aulas</span>
+            </div>
+          </div>
+
+          <div class="stat-row-card">
+            <div class="stat-icon-wrap stat-teachers">📊</div>
+            <div class="stat-info">
+              <strong id="statMedia">8.8</strong>
+              <span>Média geral do semestre</span>
+            </div>
+          </div>
+
+          <div class="stat-row-card">
+            <div class="stat-icon-wrap stat-growth">📈</div>
+            <div class="stat-info">
+              <strong id="statDisciplinas">4</strong>
+              <span>Disciplinas ativas no 2026.2</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="pabna-programs-section" id="disciplinasSecao">
+    <div class="pabna-container">
+      <div class="programs-grid">
+        
+        <div class="programs-left-col">
+          <div class="programs-header">
+            <div>
+              <span class="section-tag-pill">GRADE CURRICULAR • 2026.2</span>
+              <h3 class="programs-title">Minhas Disciplinas e Notas</h3>
+            </div>
+            <div class="programs-header-actions">
+              <button id="btnAbrirModalDisciplina" class="btn-add-subject">
+                <span>+ Adicionar Disciplina</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="disciplinas-filter-bar">
+            <div class="pabna-search-box">
+              <span class="search-ico">🔍</span>
+              <input type="text" id="filtroDisciplinas" placeholder="Pesquisar disciplina ou professor...">
+            </div>
+            <div class="pabna-filter-pills">
+              <button class="pill-filter active" data-filter="todas">Todas</button>
+              <button class="pill-filter" data-filter="aprovado">Aprovadas</button>
+              <button class="pill-filter" data-filter="cursando">Cursando / Exame</button>
+            </div>
+          </div>
+
+          <div class="table-glass-card">
+            <table class="academic-table" id="tabelaDisciplinas">
+              <thead>
+                <tr>
+                  <th>Disciplina & Docente</th>
+                  <th class="text-center">Presença</th>
+                  <th class="text-center">Nota 1</th>
+                  <th class="text-center">Nota 2</th>
+                  <th class="text-center">Média</th>
+                  <th class="text-center">Situação</th>
+                </tr>
+              </thead>
+              <tbody id="listaDisciplinasBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <aside class="programs-right-col" id="avisosSecao">
+          <div class="notices-header">
+            <div class="notice-title-wrap">
+              <span class="notice-bell">📢</span>
+              <h3>Últimos Avisos</h3>
+            </div>
+            <a href="javascript:void(0)" onclick="exibirNotificacao('Avisos Oficiais', 'Todos os avisos acadêmicos estão atualizados.', 'info')" class="link-view-all">Ver Todos →</a>
+          </div>
+
+          <div class="notices-timeline" id="listaAvisos">
+          </div>
+
+          <div class="support-banner-card">
+            <div class="supp-icon">💬</div>
+            <div>
+              <strong>Núcleo de Apoio (NAE)</strong>
+              <p>Dúvidas com notas, frequências ou requerimentos?</p>
+              <a href="https://wa.me/558530030000" target="_blank" rel="noopener" class="supp-link">Falar no WhatsApp →</a>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <div id="modalLogout" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modalLogoutTitulo">
+    <div class="modal-content modal-logout-box">
+      <div class="modal-logout-icon">🚪</div>
+      <h4 id="modalLogoutTitulo" class="modal-logout-title">Encerrar Sessão</h4>
+      <p class="modal-logout-text">
+        Deseja realmente sair do <strong>Centro Universitário UniAteneu</strong>?<br>
+        Você precisará inserir suas credenciais novamente para acessar o portal.
+      </p>
+      <div class="modal-logout-actions">
+        <button type="button" id="btnCancelarLogout" class="btn-cancelar">Cancelar</button>
+        <button type="button" id="btnConfirmarLogout" class="btn-logout-confirm">Sim, Sair</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalDisciplina" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h4 id="modalTitulo">Nova Disciplina</h4>
+          <span class="modal-sub">Adicione uma matéria à sua grade curricular</span>
+        </div>
+        <button id="btnFecharModal" class="btn-fechar" aria-label="Fechar modal">&times;</button>
+      </div>
+
+      <form id="formNovaDisciplina">
+        <div class="form-group">
+          <label for="nomeDisciplinaInput">Nome da Disciplina</label>
+          <input type="text" id="nomeDisciplinaInput" required placeholder="Ex: Banco de Dados Relacional">
+        </div>
+
+        <div class="form-group">
+          <label for="professorInput">Professor(a) Titular</label>
+          <input type="text" id="professorInput" required placeholder="Ex: Prof. Dr. André Vasconcelos">
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="nota1Input">Nota 1 (0 a 10)</label>
+            <input type="number" id="nota1Input" min="0" max="10" step="0.1" required placeholder="8.5">
+          </div>
+          <div class="form-group">
+            <label for="nota2Input">Nota 2 (0 a 10)</label>
+            <input type="number" id="nota2Input" min="0" max="10" step="0.1" required placeholder="9.0">
+          </div>
+          <div class="form-group">
+            <label for="frequenciaInput">Frequência (%)</label>
+            <input type="number" id="frequenciaInput" min="0" max="100" step="1" value="95" required placeholder="95">
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="btnCancelarModal" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-pabna-primary" style="padding: 0.75rem 1.75rem;">Salvar Disciplina</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="pabna-footer">
+    <div class="pabna-container footer-flex">
+      <div class="footer-brand-side">
+        <strong>Centro Universitário UniAteneu</strong>
+        <p>Projeto de Interface Homem-Máquina (IHM) • Análise e Desenvolvimento de Sistemas</p>
+      </div>
+      <div class="footer-links-side">
+        <span>Campus Grand Shopping • Messejana • Harmony • EAD</span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

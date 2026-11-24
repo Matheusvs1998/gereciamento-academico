@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro Universitário UniAteneu - Portal do Aluno</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+  <div class="login-wrapper">
+
+    <div class="login-showcase">
+      <div class="showcase-content">
+        <div class="brand-badge">
+          <span class="badge-dot"></span>
+          <span>Portal Oficial do Estudante</span>
+        </div>
+
+        <div class="showcase-logo">
+          <img src="assets/logo-uniateneu.png" alt="UniAteneu" class="official-logo-img">
+        </div>
+
+        <h1 class="showcase-headline">
+          Seu universo acadêmico mais <span>rápido, moderno e intuitivo.</span>
+        </h1>
+        <p class="showcase-desc">
+          Acesse notas, frequências, financeiro, ambiente virtual e serviços da secretaria em uma experiência completamente renovada.
+        </p>
+
+        <div class="showcase-features">
+          <div class="feature-item">
+            <div class="feat-icon">📊</div>
+            <div>
+              <strong>Notas & Frequências</strong>
+              <span>Acompanhamento em tempo real</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feat-icon">💳</div>
+            <div>
+              <strong>Financeiro & Pix</strong>
+              <span>2ª via rápida sem burocracia</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feat-icon">🎓</div>
+            <div>
+              <strong>AVA Integrado</strong>
+              <span>Aulas, materiais e trabalhos</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase-footer">
+          <span>Unidades: Grand Shopping • Messejana • Harmony • Lagoa • Siqueira • EAD</span>
+        </div>
+      </div>
+
+      <div class="showcase-student-wrap">
+        <div class="student-glow"></div>
+        <img src="assets/aluno-uniateneu.png?v=5" alt="Rapaz Propaganda UniAteneu" class="student-propaganda-img">
+      </div>
+    </div>
+
+    <div class="login-form-area">
+      <div class="login-box">
+
+        <div class="mobile-brand-header">
+          <img src="assets/logo-uniateneu.png" alt="UniAteneu" style="height: 32px; width: auto;">
+          <div>
+            <h2 class="mobile-logo-text">Mundo <strong>UniAteneu</strong></h2>
+            <span class="mobile-sub">Portal do Aluno</span>
+          </div>
+        </div>
+
+        <div class="login-welcome">
+          <h2>Acesse sua conta</h2>
+          <p>Informe seu CPF, e-mail institucional ou matrícula</p>
+        </div>
+
+        <div id="mensagemErro" class="alerta-erro" style="display: none;" role="alert">
+          <span class="alerta-icone">⚠️</span>
+          <span id="textoErro">E-mail ou senha incorretos.</span>
+        </div>
+
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label for="email">CPF, Matrícula ou E-mail</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input type="text" id="email" name="email" placeholder="Ex: 000.000.000-00 ou aluno@ads.com" required autocomplete="username">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-with-link">
+              <label for="senha">Senha de Acesso</label>
+              <a href="#" class="link-recuperar" id="linkEsqueciSenha">Esqueceu a senha?</a>
+            </div>
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required autocomplete="current-password">
+              <button type="button" id="btnToggleSenha" class="btn-toggle-senha" aria-label="Mostrar ou ocultar senha" title="Mostrar/ocultar senha">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <div class="form-options">
+            <label class="checkbox-container">
+              <input type="checkbox" id="lembrarUsuario" checked>
+              <span class="checkmark"></span>
+              Lembrar meus dados
+            </label>
+          </div>
+
+          <button type="submit" class="btn-primary" id="btnEntrar">
+            <span class="btn-text">Entrar no Centro Universitário UniAteneu</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </form>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="badge-demo">Credenciais de Teste</span>
+          </div>
+          <p class="demo-info">
+            E-mail: <code>aluno@ads.com</code><br>
+            Senha: <code>123456</code>
+          </p>
+        </div>
+
+        <div class="login-extra-links">
+          <a href="#" class="extra-link" id="btnPrimeiroAcesso">
+            <span>✨ Primeiro acesso? Ative sua conta</span>
+          </a>
+          <div class="support-divider"></div>
+          <div class="support-contact">
+            <span>Dúvidas no acesso?</span>
+            <a href="https://wa.me/558530030000" target="_blank" rel="noopener">Falar com o Suporte UniAteneu (WhatsApp)</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div id="modalAvisoLogin" class="modal" style="display: none;" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="modalAvisoTitulo">Ajuda de Acesso</h4>
+        <button id="btnFecharModalAviso" class="btn-fechar">&times;</button>
+      </div>
+      <p id="modalAvisoTexto" style="color: var(--text-muted); line-height: 1.6;"></p>
+      <div class="modal-actions">
+        <button type="button" id="btnOkModalAviso" class="btn-primary" style="width: auto; padding: 0.6rem 1.5rem;">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
