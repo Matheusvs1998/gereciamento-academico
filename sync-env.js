@@ -32,34 +32,6 @@ function syncEnv() {
 `;
 
   fs.writeFileSync(path.join(__dirname, 'supabase-config.js'), jsContent, 'utf8');
-
-  const publicDir = path.join(__dirname, 'public');
-  if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
-  }
-
-  const arquivos = [
-    'index.html',
-    'painel.html',
-    'manutencao.html',
-    'style.css',
-    'script.js',
-    'supabase.js',
-    'supabase-config.js'
-  ];
-
-  arquivos.forEach(arq => {
-    const src = path.join(__dirname, arq);
-    if (fs.existsSync(src)) {
-      fs.copyFileSync(src, path.join(publicDir, arq));
-    }
-  });
-
-  const assetsSrc = path.join(__dirname, 'assets');
-  const assetsDest = path.join(publicDir, 'assets');
-  if (fs.existsSync(assetsSrc)) {
-    fs.cpSync(assetsSrc, assetsDest, { recursive: true, force: true });
-  }
 }
 
 syncEnv();
