@@ -1,4 +1,4 @@
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 
 function verificarRedirecionamentoManutencao() {
   const caminho = window.location.pathname.toLowerCase();
