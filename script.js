@@ -244,11 +244,10 @@ function configurarTelaLogin() {
 
         const nome = document.getElementById("cadNome").value.trim();
         const email = document.getElementById("cadEmail").value.trim();
-        const matricula = document.getElementById("cadMatricula").value.trim();
         const senha = document.getElementById("cadSenha").value.trim();
         const campus = document.getElementById("cadCampus").value;
 
-        if (!nome || !email || !matricula || !senha) {
+        if (!nome || !email || !senha) {
           alert("Por favor, preencha todos os campos do cadastro.");
           return;
         }
@@ -259,10 +258,15 @@ function configurarTelaLogin() {
           btnSubmitCad.style.opacity = "0.7";
         }
 
+        const anoAtual = new Date().getFullYear();
+        const semestreAtual = new Date().getMonth() < 6 ? 1 : 2;
+        const codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
+        const matriculaGerada = `${anoAtual}.${semestreAtual}.${codigoAleatorio}`;
+
         const novoUsuario = {
           nome,
           email,
-          matricula,
+          matricula: matriculaGerada,
           cargo: "aluno",
           status: "ativo",
           senha,
@@ -270,8 +274,12 @@ function configurarTelaLogin() {
           curso: "Análise e Desenvolvimento de Sistemas"
         };
 
+        let usuarioCadastrado = novoUsuario;
         if (typeof bancoCadastrarUsuario === "function") {
-          await bancoCadastrarUsuario(novoUsuario);
+          const resultado = await bancoCadastrarUsuario(novoUsuario);
+          if (resultado && resultado.matricula) {
+            usuarioCadastrado = resultado;
+          }
         }
 
         if (btnSubmitCad) {
@@ -288,9 +296,9 @@ function configurarTelaLogin() {
 
         exibirNotificacao(
           "Cadastro Concluído com Sucesso!",
-          `Olá, ${nome.split(" ")[0]}! Sua conta de aluno foi ativada. Clique em "Entrar" para acessar o Portal Acadêmico imediatamente.`,
+          `Parabéns, ${nome.split(" ")[0]}! Sua matrícula é ${usuarioCadastrado.matricula}. Você já pode entrar com seu e-mail ou matrícula.`,
           "success",
-          6000
+          8000
         );
       });
     }

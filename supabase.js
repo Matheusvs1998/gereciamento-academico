@@ -216,11 +216,19 @@ async function bancoListarUsuariosPendentes() {
   return todos.filter(u => u.status === "pendente" || u.cargo === "pendente");
 }
 
+function gerarMatriculaUnica() {
+  const ano = new Date().getFullYear();
+  const semestre = new Date().getMonth() < 6 ? 1 : 2;
+  const aleatorio = Math.floor(1000 + Math.random() * 9000);
+  return `${ano}.${semestre}.${aleatorio}`;
+}
+
 async function bancoCadastrarUsuario(novoUsuario) {
+  const matriculaFinal = novoUsuario.matricula || gerarMatriculaUnica();
   const usuarioCompleto = {
     id: novoUsuario.id || `usr-${Date.now()}`,
     nome: novoUsuario.nome,
-    matricula: novoUsuario.matricula,
+    matricula: matriculaFinal,
     email: novoUsuario.email,
     senha: novoUsuario.senha,
     cargo: novoUsuario.cargo || "aluno",

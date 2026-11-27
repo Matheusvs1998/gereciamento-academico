@@ -156,7 +156,7 @@
 
       <div class="approval-notice-card" style="background: rgba(26, 86, 219, 0.08); border-color: rgba(26, 86, 219, 0.25);">
         <span class="approval-notice-icon">🎓</span>
-        <p>Cadastre seus dados para ingressar como <strong>Aluno(a)</strong>. O acesso ao painel acadêmico é liberado imediatamente!</p>
+        <p>Cadastre seus dados para ingressar como <strong>Aluno(a)</strong>. Sua matrícula institucional será gerada automaticamente pelo sistema!</p>
       </div>
 
       <form id="formCadastroUsuario">
@@ -170,10 +170,6 @@
         </div>
         <div class="form-grid-2">
           <div class="form-group">
-            <label for="cadMatricula">Matrícula / Identificador</label>
-            <input type="text" id="cadMatricula" required placeholder="Ex: 2026.2.0999">
-          </div>
-          <div class="form-group">
             <label for="cadCampus">Unidade / Campus</label>
             <select id="cadCampus">
               <option value="Campus Grand Shopping">Campus Grand Shopping</option>
@@ -183,10 +179,10 @@
               <option value="EAD Online">EAD Online</option>
             </select>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="cadSenha">Senha de Acesso</label>
-          <input type="password" id="cadSenha" required placeholder="Crie uma senha segura">
+          <div class="form-group">
+            <label for="cadSenha">Senha de Acesso</label>
+            <input type="password" id="cadSenha" required placeholder="Crie uma senha segura">
+          </div>
         </div>
         <div class="modal-actions">
           <button type="button" id="btnCancelarCadastro" class="btn-cancelar">Cancelar</button>
