@@ -1,7 +1,11 @@
 {
-  "version": 2,
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
   "buildCommand": "node sync-env.js",
-  "outputDirectory": "public"
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/painel", "destination": "/painel.html" }
+  ]
 }
