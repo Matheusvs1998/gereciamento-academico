@@ -124,6 +124,7 @@ a {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .pabna-logo-badge {
@@ -169,16 +170,18 @@ a {
 .pabna-nav-links {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.3rem;
+  flex-shrink: 0;
 }
 
 .nav-link {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--text-secondary);
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 0.75rem;
   border-radius: var(--radius-full);
   transition: all var(--transition-smooth);
+  white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -195,7 +198,8 @@ a {
 .pabna-nav-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
+  flex-shrink: 0;
 }
 
 .pabna-icon-btn {
@@ -220,11 +224,13 @@ a {
 .pabna-user-pill {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.55rem;
   background: var(--bg-glass-subtle);
   border: 1px solid var(--border-subtle);
   padding: 0.25rem 0.8rem 0.25rem 0.35rem;
   border-radius: var(--radius-full);
+  min-width: 0;
+  max-width: 230px;
 }
 
 .pabna-avatar {
@@ -238,22 +244,31 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .pabna-user-meta {
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
+  line-height: 1.15;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .pabna-salutation {
   font-size: 0.68rem;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .pabna-user-name {
   font-size: 0.84rem;
+  font-weight: 700;
   color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 .pabna-cta-btn {
@@ -1740,6 +1755,19 @@ a {
 }
 
 @media (max-width: 1200px) {
+  .pabna-brand-motto {
+    display: none;
+  }
+
+  .nav-link {
+    font-size: 0.82rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .pabna-user-pill {
+    max-width: 190px;
+  }
+
   .pabna-hero-headline {
     font-size: 2.6rem;
   }

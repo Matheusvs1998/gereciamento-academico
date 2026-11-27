@@ -321,8 +321,17 @@ function configurarPainelAluno() {
   const elSaudacao = document.getElementById("saudacaoHora");
   const elCargo = document.getElementById("badgeCargoUsuario");
 
-  if (elNome) elNome.textContent = nomeAluno;
-  if (elBoasVindas) elBoasVindas.textContent = nomeAluno.split(" ")[0];
+  let nomeExibicao = nomeAluno;
+  const partesNome = nomeAluno.trim().split(/\s+/);
+  if (partesNome.length > 2) {
+    nomeExibicao = `${partesNome[0]} ${partesNome[partesNome.length - 1]}`;
+  }
+
+  if (elNome) {
+    elNome.textContent = nomeExibicao;
+    elNome.title = nomeAluno;
+  }
+  if (elBoasVindas) elBoasVindas.textContent = partesNome[0];
   if (elAvatar) elAvatar.textContent = nomeAluno.charAt(0).toUpperCase();
 
   if (elCargo) {
@@ -344,20 +353,28 @@ function configurarPainelAluno() {
   const linkAdmin = document.getElementById("linkNavAdmin");
   const secaoAdmin = document.getElementById("adminSecao");
   const btnNovoAviso = document.getElementById("btnNovoAviso");
+  const btnAddDisciplina = document.getElementById("btnAbrirModalDisciplina");
+  const containerAddDisc = document.getElementById("containerBtnAddDisciplina");
 
   if (cargo === "admin") {
     if (linkAdmin) linkAdmin.style.display = "inline-block";
     if (secaoAdmin) secaoAdmin.style.display = "block";
     if (btnNovoAviso) btnNovoAviso.style.display = "inline-flex";
+    if (btnAddDisciplina) btnAddDisciplina.style.display = "inline-flex";
+    if (containerAddDisc) containerAddDisc.style.display = "block";
     configurarPainelAdmin();
   } else if (cargo === "professor") {
     if (linkAdmin) linkAdmin.style.display = "none";
     if (secaoAdmin) secaoAdmin.style.display = "none";
     if (btnNovoAviso) btnNovoAviso.style.display = "inline-flex";
+    if (btnAddDisciplina) btnAddDisciplina.style.display = "none";
+    if (containerAddDisc) containerAddDisc.style.display = "none";
   } else {
     if (linkAdmin) linkAdmin.style.display = "none";
     if (secaoAdmin) secaoAdmin.style.display = "none";
     if (btnNovoAviso) btnNovoAviso.style.display = "none";
+    if (btnAddDisciplina) btnAddDisciplina.style.display = "none";
+    if (containerAddDisc) containerAddDisc.style.display = "none";
   }
 
   const btnSair = document.getElementById("btnSair");
@@ -1081,6 +1098,7 @@ function configurarFiltros() {
 }
 
 function configurarModalDisciplina() {
+  const cargo = localStorage.getItem("usuario_cargo") || "aluno";
   const modal = document.getElementById("modalDisciplina");
   const btnAbrir = document.getElementById("btnAbrirModalDisciplina");
   const btnFechar = document.getElementById("btnFecharModal");
@@ -1088,6 +1106,11 @@ function configurarModalDisciplina() {
   const form = document.getElementById("formNovaDisciplina");
 
   if (!modal || !btnAbrir) return;
+
+  if (cargo !== "admin") {
+    btnAbrir.style.display = "none";
+    return;
+  }
 
   const abrir = () => { modal.style.display = "flex"; };
   const fechar = () => {
