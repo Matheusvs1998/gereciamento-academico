@@ -65,6 +65,12 @@ alter table avisos enable row level security;
 drop policy if exists "Permitir leitura publica alunos" on alunos;
 create policy "Permitir leitura publica alunos" on alunos for select using (true);
 
+drop policy if exists "Permitir insercao alunos" on alunos;
+create policy "Permitir insercao alunos" on alunos for insert with check (true);
+
+drop policy if exists "Permitir atualizacao alunos" on alunos;
+create policy "Permitir atualizacao alunos" on alunos for update using (true);
+
 drop policy if exists "Permitir leitura usuarios" on usuarios;
 create policy "Permitir leitura usuarios" on usuarios for select using (true);
 
