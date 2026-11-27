@@ -225,8 +225,7 @@ function gerarMatriculaUnica() {
 
 async function bancoCadastrarUsuario(novoUsuario) {
   const matriculaFinal = novoUsuario.matricula || gerarMatriculaUnica();
-  const usuarioCompleto = {
-    id: novoUsuario.id || `usr-${Date.now()}`,
+  const dadosSupabase = {
     nome: novoUsuario.nome,
     matricula: matriculaFinal,
     email: novoUsuario.email,
@@ -234,37 +233,53 @@ async function bancoCadastrarUsuario(novoUsuario) {
     cargo: novoUsuario.cargo || "aluno",
     status: novoUsuario.status || "ativo",
     curso: novoUsuario.curso || "Análise e Desenvolvimento de Sistemas",
-    campus: novoUsuario.campus || "Campus Grand Shopping",
+    campus: novoUsuario.campus || "Campus Grand Shopping"
+  };
+
+  const usuarioLocal = {
+    ...dadosSupabase,
+    id: `usr-${Date.now()}`,
     created_at: new Date().toISOString()
   };
 
   const locais = obterUsuariosLocais();
-  const indexExistente = locais.findIndex(u => u.matricula === usuarioCompleto.matricula || u.email.toLowerCase() === usuarioCompleto.email.toLowerCase());
+  const indexExistente = locais.findIndex(u => u.matricula === usuarioLocal.matricula || u.email.toLowerCase() === usuarioLocal.email.toLowerCase());
   if (indexExistente >= 0) {
-    locais[indexExistente] = usuarioCompleto;
+    locais[indexExistente] = usuarioLocal;
   } else {
-    locais.push(usuarioCompleto);
+    locais.push(usuarioLocal);
   }
   salvarUsuariosLocais(locais);
 
   const db = obterClienteSupabase();
   if (db) {
     try {
-      await db.from("usuarios").upsert([usuarioCompleto], { onConflict: "matricula" });
-      if (usuarioCompleto.cargo === "aluno" && usuarioCompleto.status === "ativo") {
-        await db.from("alunos").upsert([{
-          nome: usuarioCompleto.nome,
-          matricula: usuarioCompleto.matricula,
-          email: usuarioCompleto.email,
-          senha: usuarioCompleto.senha,
-          curso: usuarioCompleto.curso,
-          campus: usuarioCompleto.campus
-        }], { onConflict: "matricula" });
+      const { data } = await db
+        .from("usuarios")
+        .upsert([dadosSupabase], { onConflict: "matricula" })
+        .select();
+
+      if (data && data.length > 0 && data[0].id) {
+        usuarioLocal.id = data[0].id;
+        salvarUsuariosLocais(locais);
+      }
+
+      if (dadosSupabase.cargo === "aluno" && dadosSupabase.status === "ativo") {
+        await db
+          .from("alunos")
+          .upsert([{
+            nome: dadosSupabase.nome,
+            matricula: dadosSupabase.matricula,
+            email: dadosSupabase.email,
+            senha: dadosSupabase.senha,
+            curso: dadosSupabase.curso,
+            campus: dadosSupabase.campus
+          }], { onConflict: "matricula" });
       }
     } catch (e) {}
   }
 
-  return usuarioCompleto;
+  return usuarioLocal;
 }
 
 async function bancoAprovarUsuario(matricula, cargoDefinido) {
