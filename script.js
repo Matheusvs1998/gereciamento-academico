@@ -1,15 +1,15 @@
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 
 function verificarRedirecionamentoManutencao() {
   const caminho = window.location.pathname.toLowerCase();
   const pagina = caminho.substring(caminho.lastIndexOf("/") + 1) || "index.html";
 
   if (MAINTENANCE_MODE) {
-    if (pagina !== "manutencao.html") {
+    if (!caminho.includes("manutencao")) {
       window.location.replace("manutencao.html");
     }
   } else {
-    if (pagina === "manutencao.html") {
+    if (caminho.includes("manutencao")) {
       const estaLogado = localStorage.getItem("aluno_autenticado") === "true";
       window.location.replace(estaLogado ? "painel.html" : "index.html");
     }

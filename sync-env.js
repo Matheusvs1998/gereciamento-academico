@@ -41,6 +41,7 @@ function syncEnv() {
   const arquivos = [
     'index.html',
     'painel.html',
+    'manutencao.html',
     'style.css',
     'script.js',
     'supabase.js',

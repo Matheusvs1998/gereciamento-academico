@@ -6,6 +6,7 @@
   "outputDirectory": "public",
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
-    { "source": "/painel", "destination": "/painel.html" }
+    { "source": "/painel", "destination": "/painel.html" },
+    { "source": "/manutencao", "destination": "/index.html" }
   ]
 }
