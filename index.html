@@ -123,19 +123,12 @@
           </button>
         </form>
 
-        <div class="demo-card">
-          <div class="demo-header">
-            <span class="badge-demo">Credenciais de Teste</span>
-          </div>
-          <p class="demo-info">
-            E-mail: <code>aluno@ads.com</code><br>
-            Senha: <code>123456</code>
-          </p>
-        </div>
-
         <div class="login-extra-links">
+          <button type="button" class="extra-link btn-criar-conta-link" id="btnAbrirCadastro">
+            <span>✨ Novo usuário? Criar conta no portal</span>
+          </button>
           <a href="#" class="extra-link" id="btnPrimeiroAcesso">
-            <span>✨ Primeiro acesso? Ative sua conta</span>
+            <span>ℹ️ Instruções de primeiro acesso</span>
           </a>
           <div class="support-divider"></div>
           <div class="support-contact">
@@ -147,6 +140,60 @@
       </div>
     </div>
 
+  </div>
+
+  </div>
+
+  <div id="modalCadastro" class="modal" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h4 id="modalCadastroTitulo">Novo Cadastro de Aluno</h4>
+          <span class="modal-sub">Crie seu acesso imediato ao Portal Acadêmico UniAteneu</span>
+        </div>
+        <button type="button" id="btnFecharModalCadastro" class="btn-fechar">&times;</button>
+      </div>
+
+      <div class="approval-notice-card" style="background: rgba(26, 86, 219, 0.08); border-color: rgba(26, 86, 219, 0.25);">
+        <span class="approval-notice-icon">🎓</span>
+        <p>Cadastre seus dados para ingressar como <strong>Aluno(a)</strong>. O acesso ao painel acadêmico é liberado imediatamente!</p>
+      </div>
+
+      <form id="formCadastroUsuario">
+        <div class="form-group">
+          <label for="cadNome">Nome Completo</label>
+          <input type="text" id="cadNome" required placeholder="Ex: Lucas Ferreira">
+        </div>
+        <div class="form-group">
+          <label for="cadEmail">E-mail Institucional</label>
+          <input type="email" id="cadEmail" required placeholder="Ex: lucas@ads.com">
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="cadMatricula">Matrícula / Identificador</label>
+            <input type="text" id="cadMatricula" required placeholder="Ex: 2026.2.0999">
+          </div>
+          <div class="form-group">
+            <label for="cadCampus">Unidade / Campus</label>
+            <select id="cadCampus">
+              <option value="Campus Grand Shopping">Campus Grand Shopping</option>
+              <option value="Unidade Harmony">Unidade Harmony</option>
+              <option value="Unidade Messejana">Unidade Messejana</option>
+              <option value="Campus Lagoa">Campus Lagoa</option>
+              <option value="EAD Online">EAD Online</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="cadSenha">Senha de Acesso</label>
+          <input type="password" id="cadSenha" required placeholder="Crie uma senha segura">
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="btnCancelarCadastro" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-primary" style="width: auto; padding: 0.75rem 1.75rem;">Concluir Cadastro</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <div id="modalAvisoLogin" class="modal" style="display: none;" role="dialog">

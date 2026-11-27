@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "buildCommand": "node sync-env.js"
+}

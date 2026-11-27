@@ -29,6 +29,7 @@
         <a href="#disciplinasSecao" class="nav-link">Disciplinas</a>
         <a href="#campusSecao" class="nav-link">Sobre o Curso</a>
         <a href="#avisosSecao" class="nav-link">Avisos</a>
+        <a href="#adminSecao" class="nav-link nav-link-admin" id="linkNavAdmin" style="display: none;">Coordenação</a>
         <a href="javascript:void(0)" onclick="exibirAvisoServico('Secretaria Online')" class="nav-link">Secretaria</a>
         <a href="javascript:void(0)" onclick="exibirAvisoServico('AVA Blackboard')" class="nav-link">AVA</a>
       </nav>
@@ -39,10 +40,13 @@
         </button>
 
         <div class="pabna-user-pill">
-          <div class="pabna-avatar" id="avatarInicial">M</div>
+          <div class="pabna-avatar" id="avatarInicial">U</div>
           <div class="pabna-user-meta">
-            <span class="pabna-salutation" id="saudacaoHora">Olá,</span>
-            <strong class="pabna-user-name" id="nomeEstudante">Maria Eduarda</strong>
+            <div style="display: flex; align-items: center; gap: 0.35rem;">
+              <span class="pabna-salutation" id="saudacaoHora">Olá,</span>
+              <span class="badge-role-pill role-aluno" id="badgeCargoUsuario">Aluno</span>
+            </div>
+            <strong class="pabna-user-name" id="nomeEstudante">Usuário</strong>
           </div>
         </div>
 
@@ -274,7 +278,10 @@
               <span class="notice-bell">📢</span>
               <h3>Últimos Avisos</h3>
             </div>
-            <a href="javascript:void(0)" onclick="exibirNotificacao('Avisos Oficiais', 'Todos os avisos acadêmicos estão atualizados.', 'info')" class="link-view-all">Ver Todos →</a>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button type="button" id="btnNovoAviso" class="btn-add-notice-pill" style="display: none;" title="Publicar novo comunicado">+ Comunicado</button>
+              <a href="javascript:void(0)" onclick="exibirNotificacao('Avisos Oficiais', 'Todos os avisos acadêmicos estão atualizados.', 'info')" class="link-view-all">Ver Todos →</a>
+            </div>
           </div>
 
           <div class="notices-timeline" id="listaAvisos">
@@ -290,6 +297,109 @@
           </div>
         </aside>
 
+      </div>
+    </div>
+  </section>
+
+  <section class="pabna-admin-section" id="adminSecao" style="display: none;">
+    <div class="pabna-container">
+      <div class="admin-panel-card">
+        <div class="admin-panel-header">
+          <div>
+            <span class="section-tag-pill">GESTÃO INSTITUCIONAL</span>
+            <h3 class="admin-panel-title">Painel da Coordenação & Usuários</h3>
+            <p class="admin-panel-subtitle">Gerenciamento de acessos acadêmicos, docentes e discentes em tempo real.</p>
+          </div>
+          <div class="admin-panel-actions">
+            <button type="button" id="btnAdminNovoUsuario" class="btn-pabna-primary">
+              <span>+ Cadastrar Usuário</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <span class="admin-stat-icon">🎓</span>
+            <div class="admin-stat-details">
+              <strong id="adminTotalAlunos">0</strong>
+              <span>Alunos Ativos</span>
+            </div>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-icon">👨‍🏫</span>
+            <div class="admin-stat-details">
+              <strong id="adminTotalProfessores">0</strong>
+              <span>Professores</span>
+            </div>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-icon">📖</span>
+            <div class="admin-stat-details">
+              <strong id="adminTotalDisciplinas">0</strong>
+              <span>Disciplinas Ofertadas</span>
+            </div>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-icon">📢</span>
+            <div class="admin-stat-details">
+              <strong id="adminTotalAvisos">0</strong>
+              <span>Avisos Publicados</span>
+            </div>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-icon">⏳</span>
+            <div class="admin-stat-details">
+              <strong id="adminTotalPendentes">0</strong>
+              <span>Aprovações Pendentes</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="boxPendentesAprovacao" style="margin-top: 1.5rem; display: none;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <h4 style="font-size: 1.1rem; font-weight: 800; color: #b45309; margin: 0;">⏳ Solicitações de Cadastro Pendentes</h4>
+              <span class="badge-pending-counter" id="badgeTotalPendentes">0</span>
+            </div>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">Defina o cargo para liberar o acesso</span>
+          </div>
+          <div class="table-glass-card" style="border: 1px solid rgba(245, 158, 11, 0.4);">
+            <table class="academic-table" id="tabelaPendentesAdmin">
+              <thead>
+                <tr>
+                  <th>Nome do Solicitante</th>
+                  <th>E-mail</th>
+                  <th>Matrícula</th>
+                  <th class="text-center">Unidade</th>
+                  <th class="text-center">Definir Cargo & Liberar</th>
+                </tr>
+              </thead>
+              <tbody id="listaPendentesAdminBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 2rem; margin-bottom: 0.75rem;">
+          <h4 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin: 0;">👥 Usuários Cadastrados & Aprovados</h4>
+        </div>
+
+        <div class="table-glass-card">
+          <table class="academic-table" id="tabelaUsuariosAdmin">
+            <thead>
+              <tr>
+                <th>Nome & Identificação</th>
+                <th>E-mail</th>
+                <th>Matrícula</th>
+                <th class="text-center">Hierarquia</th>
+                <th class="text-center">Curso</th>
+                <th class="text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="listaUsuariosAdminBody">
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -348,6 +458,137 @@
         <div class="modal-actions">
           <button type="button" id="btnCancelarModal" class="btn-cancelar">Cancelar</button>
           <button type="submit" class="btn-pabna-primary" style="padding: 0.75rem 1.75rem;">Salvar Disciplina</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalNovoAviso" class="modal" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h4 id="modalNovoAvisoTitulo">Publicar Comunicado Acadêmico</h4>
+          <span class="modal-sub">O aviso será exibido no mural para todos os alunos em tempo real</span>
+        </div>
+        <button type="button" id="btnFecharModalAvisoPub" class="btn-fechar">&times;</button>
+      </div>
+      <form id="formNovoAviso">
+        <div class="form-group">
+          <label for="avisoTituloInput">Título do Comunicado</label>
+          <input type="text" id="avisoTituloInput" required placeholder="Ex: Início das Inscrições para Monitoria">
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="avisoTagInput">Categoria / Tag</label>
+            <input type="text" id="avisoTagInput" required placeholder="Ex: Secretaria, Provas, Evento">
+          </div>
+          <div class="form-group">
+            <label for="avisoTipoInput">Prioridade</label>
+            <select id="avisoTipoInput">
+              <option value="padrao">Padrão</option>
+              <option value="urgente">Urgente</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="avisoTextoInput">Conteúdo do Aviso</label>
+          <textarea id="avisoTextoInput" rows="4" required placeholder="Digite o conteúdo detalhado do comunicado..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="btnCancelarModalAvisoPub" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-pabna-primary" style="padding: 0.75rem 1.75rem;">Publicar Aviso</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalUsuarioAdmin" class="modal" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h4 id="modalUsuarioAdminTitulo">Cadastrar Novo Usuário</h4>
+          <span class="modal-sub">Defina os dados de acesso e a hierarquia do usuário</span>
+        </div>
+        <button type="button" id="btnFecharModalAdminUsr" class="btn-fechar">&times;</button>
+      </div>
+      <form id="formAdminNovoUsuario">
+        <div class="form-group">
+          <label for="adminUsrNome">Nome Completo</label>
+          <input type="text" id="adminUsrNome" required placeholder="Ex: Lucas Mendes">
+        </div>
+        <div class="form-group">
+          <label for="adminUsrEmail">E-mail Institucional</label>
+          <input type="email" id="adminUsrEmail" required placeholder="Ex: lucas@ads.com">
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="adminUsrMatricula">Matrícula</label>
+            <input type="text" id="adminUsrMatricula" required placeholder="Ex: 2026.2.0777">
+          </div>
+          <div class="form-group">
+            <label for="adminUsrCargo">Hierarquia</label>
+            <select id="adminUsrCargo" required>
+              <option value="aluno">Aluno(a)</option>
+              <option value="professor">Professor(a)</option>
+              <option value="admin">Coordenação / Admin</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="adminUsrSenha">Senha Inicial</label>
+            <input type="password" id="adminUsrSenha" required placeholder="Senha de acesso">
+          </div>
+          <div class="form-group">
+            <label for="adminUsrCampus">Campus</label>
+            <select id="adminUsrCampus">
+              <option value="Campus Grand Shopping">Campus Grand Shopping</option>
+              <option value="Unidade Harmony">Unidade Harmony</option>
+              <option value="Unidade Messejana">Unidade Messejana</option>
+              <option value="EAD Online">EAD Online</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="btnCancelarModalAdminUsr" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-pabna-primary" style="padding: 0.75rem 1.75rem;">Cadastrar Usuário</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalEditarNotas" class="modal" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h4 id="modalEditarNotasTitulo">Lançamento de Notas e Frequência</h4>
+          <span class="modal-sub" id="modalEditarNotasSub">Atualização acadêmica pelo docente</span>
+        </div>
+        <button type="button" id="btnFecharModalNotas" class="btn-fechar">&times;</button>
+      </div>
+      <form id="formEditarNotas">
+        <input type="hidden" id="editDisciplinaId">
+        <div class="form-group">
+          <label>Disciplina</label>
+          <input type="text" id="editDisciplinaNome" readonly style="opacity: 0.8; cursor: not-allowed;">
+        </div>
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label for="editNota1">Nota 1 (NP1)</label>
+            <input type="number" id="editNota1" min="0" max="10" step="0.1" required>
+          </div>
+          <div class="form-group">
+            <label for="editNota2">Nota 2 (NP2)</label>
+            <input type="number" id="editNota2" min="0" max="10" step="0.1" required>
+          </div>
+          <div class="form-group">
+            <label for="editFrequencia">Frequência (%)</label>
+            <input type="number" id="editFrequencia" min="0" max="100" step="1" required>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="btnCancelarModalNotas" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-pabna-primary" style="padding: 0.75rem 1.75rem;">Salvar Alterações</button>
         </div>
       </form>
     </div>

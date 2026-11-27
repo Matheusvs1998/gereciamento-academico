@@ -5,6 +5,8 @@
   "main": "index.html",
   "scripts": {
     "sync-env": "node sync-env.js",
+    "build": "node sync-env.js",
+    "vercel-build": "node sync-env.js",
     "test": "node test-backend.js",
     "start": "node sync-env.js && serve .",
     "dev": "node sync-env.js && live-server --port=3000 --entry-file=index.html"

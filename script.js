@@ -139,24 +139,19 @@ function configurarTelaLogin() {
     }
 
     let autenticado = false;
-    let dadosAluno = null;
+    let dadosUsuario = null;
 
-    if (typeof bancoAutenticarAluno === "function") {
+    if (typeof bancoAutenticarUsuario === "function") {
+      const resultado = await bancoAutenticarUsuario(identificador, senha);
+      if (resultado.sucesso) {
+        autenticado = true;
+        dadosUsuario = resultado.usuario;
+      }
+    } else if (typeof bancoAutenticarAluno === "function") {
       const resultado = await bancoAutenticarAluno(identificador, senha);
       if (resultado.sucesso) {
         autenticado = true;
-        dadosAluno = resultado.aluno;
-      }
-    } else {
-      const loginValido = (identificador === "aluno@ads.com" || identificador === "123.456.789-00" || identificador === "aluno") && senha === "123456";
-      if (loginValido) {
-        autenticado = true;
-        dadosAluno = {
-          nome: "Maria Eduarda",
-          matricula: "2026.2.0491",
-          curso: "Análise e Desenvolvimento de Sistemas",
-          campus: "Campus Grand Shopping"
-        };
+        dadosUsuario = resultado.aluno;
       }
     }
 
@@ -165,16 +160,18 @@ function configurarTelaLogin() {
       btnSubmit.style.opacity = "";
     }
 
-    if (autenticado && dadosAluno) {
+    if (autenticado && dadosUsuario) {
       localStorage.setItem("aluno_autenticado", "true");
-      localStorage.setItem("aluno_nome", dadosAluno.nome || "Maria Eduarda");
-      localStorage.setItem("aluno_matricula", dadosAluno.matricula || "2026.2.0491");
-      localStorage.setItem("aluno_curso", dadosAluno.curso || "Análise e Desenvolvimento de Sistemas");
-      localStorage.setItem("aluno_campus", dadosAluno.campus || "Campus Grand Shopping");
+      localStorage.setItem("usuario_cargo", dadosUsuario.cargo || "aluno");
+      localStorage.setItem("aluno_nome", dadosUsuario.nome || "Usuário UniAteneu");
+      localStorage.setItem("aluno_matricula", dadosUsuario.matricula || "2026.2.0491");
+      localStorage.setItem("aluno_curso", dadosUsuario.curso || "Análise e Desenvolvimento de Sistemas");
+      localStorage.setItem("aluno_campus", dadosUsuario.campus || "Campus Grand Shopping");
+      localStorage.setItem("aluno_email", dadosUsuario.email || "aluno@ads.com");
 
       window.location.href = "painel.html";
     } else {
-      exibirErro("Credenciais incorretas! Use o e-mail 'aluno@ads.com' e a senha '123456'.");
+      exibirErro("E-mail, matrícula ou senha incorretos. Verifique suas credenciais ou crie uma conta.");
     }
   });
 
@@ -200,7 +197,7 @@ function configurarTelaLogin() {
     linkEsqueci.addEventListener("click", (e) => {
       e.preventDefault();
       modalAvisoTitulo.textContent = "Recuperação de Senha";
-      modalAvisoTexto.innerHTML = "Para redefinir sua senha institucional do <strong>Mundo UniAteneu</strong>, digite suas credenciais didáticas de teste: <br><br>• E-mail: <code>aluno@ads.com</code><br>• Senha: <code>123456</code><br><br>Em ambiente de produção, um link de verificação é enviado para o seu e-mail cadastrado na matrícula.";
+      modalAvisoTexto.innerHTML = "Para redefinir sua senha institucional do <strong>Mundo UniAteneu</strong>, entre em contato com a secretaria acadêmica ou suporte técnico da sua unidade para obter um link seguro de recuperação.";
       modalAviso.style.display = "flex";
     });
   }
@@ -209,7 +206,7 @@ function configurarTelaLogin() {
     linkPrimeiro.addEventListener("click", (e) => {
       e.preventDefault();
       modalAvisoTitulo.textContent = "Primeiro Acesso ao Mundo UniAteneu";
-      modalAvisoTexto.innerHTML = "Seja bem-vindo(a) à UniAteneu! Seu primeiro acesso é liberado com o seu <strong>CPF</strong> e a senha padrão enviada no ato da matrícula. Para este projeto de IHM, utilize <code>aluno@ads.com</code> e senha <code>123456</code>.";
+      modalAvisoTexto.innerHTML = "Seja bem-vindo(a) à UniAteneu! Para acessar o portal pela primeira vez, clique em <strong>Criar conta no portal</strong> logo abaixo e preencha seus dados institucionais.";
       modalAviso.style.display = "flex";
     });
   }
@@ -217,26 +214,115 @@ function configurarTelaLogin() {
   const fecharModalAviso = () => { if (modalAviso) modalAviso.style.display = "none"; };
   if (btnFecharAviso) btnFecharAviso.addEventListener("click", fecharModalAviso);
   if (btnOkAviso) btnOkAviso.addEventListener("click", fecharModalAviso);
+
+  const modalCadastro = document.getElementById("modalCadastro");
+  const btnAbrirCad = document.getElementById("btnAbrirCadastro");
+  const btnFecharCad = document.getElementById("btnFecharModalCadastro");
+  const btnCancelarCad = document.getElementById("btnCancelarCadastro");
+  const formCadastro = document.getElementById("formCadastroUsuario");
+
+  if (modalCadastro && btnAbrirCad) {
+    const fecharCadastro = () => {
+      modalCadastro.style.display = "none";
+      if (formCadastro) formCadastro.reset();
+    };
+
+    btnAbrirCad.addEventListener("click", () => {
+      modalCadastro.style.display = "flex";
+    });
+
+    if (btnFecharCad) btnFecharCad.addEventListener("click", fecharCadastro);
+    if (btnCancelarCad) btnCancelarCad.addEventListener("click", fecharCadastro);
+
+    modalCadastro.addEventListener("click", (e) => {
+      if (e.target === modalCadastro) fecharCadastro();
+    });
+
+    if (formCadastro) {
+      formCadastro.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const nome = document.getElementById("cadNome").value.trim();
+        const email = document.getElementById("cadEmail").value.trim();
+        const matricula = document.getElementById("cadMatricula").value.trim();
+        const senha = document.getElementById("cadSenha").value.trim();
+        const campus = document.getElementById("cadCampus").value;
+
+        if (!nome || !email || !matricula || !senha) {
+          alert("Por favor, preencha todos os campos do cadastro.");
+          return;
+        }
+
+        const btnSubmitCad = formCadastro.querySelector('button[type="submit"]');
+        if (btnSubmitCad) {
+          btnSubmitCad.disabled = true;
+          btnSubmitCad.style.opacity = "0.7";
+        }
+
+        const novoUsuario = {
+          nome,
+          email,
+          matricula,
+          cargo: "aluno",
+          status: "ativo",
+          senha,
+          campus,
+          curso: "Análise e Desenvolvimento de Sistemas"
+        };
+
+        if (typeof bancoCadastrarUsuario === "function") {
+          await bancoCadastrarUsuario(novoUsuario);
+        }
+
+        if (btnSubmitCad) {
+          btnSubmitCad.disabled = false;
+          btnSubmitCad.style.opacity = "";
+        }
+
+        fecharCadastro();
+
+        const inputEmail = document.getElementById("email");
+        const inputSenha = document.getElementById("senha");
+        if (inputEmail) inputEmail.value = email;
+        if (inputSenha) inputSenha.value = senha;
+
+        exibirNotificacao(
+          "Cadastro Concluído com Sucesso!",
+          `Olá, ${nome.split(" ")[0]}! Sua conta de aluno foi ativada. Clique em "Entrar" para acessar o Portal Acadêmico imediatamente.`,
+          "success",
+          6000
+        );
+      });
+    }
+  }
 }
 
 function configurarPainelAluno() {
-  
   const autenticado = localStorage.getItem("aluno_autenticado");
   if (!autenticado) {
     window.location.href = "index.html";
     return;
   }
 
-  const nomeAluno = localStorage.getItem("aluno_nome") || "Maria Eduarda";
+  const nomeAluno = localStorage.getItem("aluno_nome") || "Usuário";
+  const cargo = localStorage.getItem("usuario_cargo") || "aluno";
 
   const elNome = document.getElementById("nomeEstudante");
   const elBoasVindas = document.getElementById("nomeBoasVindas");
   const elAvatar = document.getElementById("avatarInicial");
   const elSaudacao = document.getElementById("saudacaoHora");
+  const elCargo = document.getElementById("badgeCargoUsuario");
 
   if (elNome) elNome.textContent = nomeAluno;
   if (elBoasVindas) elBoasVindas.textContent = nomeAluno.split(" ")[0];
   if (elAvatar) elAvatar.textContent = nomeAluno.charAt(0).toUpperCase();
+
+  if (elCargo) {
+    elCargo.className = `badge-role-pill role-${cargo}`;
+    if (cargo === "admin") elCargo.textContent = "Coordenação";
+    else if (cargo === "professor") elCargo.textContent = "Docente";
+    else elCargo.textContent = "Aluno";
+  }
 
   if (elSaudacao) {
     const hora = new Date().getHours();
@@ -247,13 +333,31 @@ function configurarPainelAluno() {
     elSaudacao.textContent = msg;
   }
 
+  const linkAdmin = document.getElementById("linkNavAdmin");
+  const secaoAdmin = document.getElementById("adminSecao");
+  const btnNovoAviso = document.getElementById("btnNovoAviso");
+
+  if (cargo === "admin") {
+    if (linkAdmin) linkAdmin.style.display = "inline-block";
+    if (secaoAdmin) secaoAdmin.style.display = "block";
+    if (btnNovoAviso) btnNovoAviso.style.display = "inline-flex";
+    configurarPainelAdmin();
+  } else if (cargo === "professor") {
+    if (linkAdmin) linkAdmin.style.display = "none";
+    if (secaoAdmin) secaoAdmin.style.display = "none";
+    if (btnNovoAviso) btnNovoAviso.style.display = "inline-flex";
+  } else {
+    if (linkAdmin) linkAdmin.style.display = "none";
+    if (secaoAdmin) secaoAdmin.style.display = "none";
+    if (btnNovoAviso) btnNovoAviso.style.display = "none";
+  }
+
   const btnSair = document.getElementById("btnSair");
   const modalLogout = document.getElementById("modalLogout");
   const btnCancelarLogout = document.getElementById("btnCancelarLogout");
   const btnConfirmarLogout = document.getElementById("btnConfirmarLogout");
 
   if (btnSair && modalLogout) {
-    
     btnSair.addEventListener("click", () => {
       modalLogout.style.display = "flex";
     });
@@ -267,6 +371,7 @@ function configurarPainelAluno() {
     if (btnConfirmarLogout) {
       btnConfirmarLogout.addEventListener("click", () => {
         localStorage.removeItem("aluno_autenticado");
+        localStorage.removeItem("usuario_cargo");
         window.location.href = "index.html";
       });
     }
@@ -288,25 +393,389 @@ function configurarPainelAluno() {
   renderizarAvisosUniAteneu();
   configurarFiltros();
   configurarModalDisciplina();
+  configurarModalAvisos();
+  configurarModalEditarNotas();
 
   setTimeout(() => {
+    let perfilNome = "Estudante";
+    if (cargo === "professor") perfilNome = "Docente";
+    else if (cargo === "admin") perfilNome = "Coordenação Acadêmica";
+
     exibirNotificacao(
-      "Sessão Conectada",
-      `Bem-vinda de volta ao Mundo UniAteneu, ${nomeAluno.split(" ")[0]}!`,
+      "Sessão Autenticada",
+      `Bem-vindo(a) ao Mundo UniAteneu, ${nomeAluno.split(" ")[0]}! [Perfil: ${perfilNome}]`,
       "success",
       4500
     );
   }, 700);
-
-  setTimeout(() => {
-    exibirNotificacao(
-      "Lembrete Acadêmico",
-      "Entrega do Projeto de IHM encerra hoje às 23h59 via AVA Blackboard.",
-      "warning",
-      6000
-    );
-  }, 2800);
 }
+
+function configurarPainelAdmin() {
+  renderizarUsuariosAdmin();
+  renderizarUsuariosPendentesAdmin();
+
+  if (typeof escutarMudancasUsuarios === "function") {
+    escutarMudancasUsuarios(() => {
+      renderizarUsuariosAdmin();
+      renderizarUsuariosPendentesAdmin();
+      exibirNotificacao("Gestão de Acessos", "Lista de usuários sincronizada em tempo real.", "info", 3500);
+    });
+  }
+
+  const modalAdminUsr = document.getElementById("modalUsuarioAdmin");
+  const btnAbrirAdminUsr = document.getElementById("btnAdminNovoUsuario");
+  const btnFecharAdminUsr = document.getElementById("btnFecharModalAdminUsr");
+  const btnCancelarAdminUsr = document.getElementById("btnCancelarModalAdminUsr");
+  const formAdminUsr = document.getElementById("formAdminNovoUsuario");
+
+  if (modalAdminUsr && btnAbrirAdminUsr) {
+    const fechar = () => {
+      modalAdminUsr.style.display = "none";
+      if (formAdminUsr) formAdminUsr.reset();
+    };
+
+    btnAbrirAdminUsr.addEventListener("click", () => {
+      modalAdminUsr.style.display = "flex";
+    });
+
+    if (btnFecharAdminUsr) btnFecharAdminUsr.addEventListener("click", fechar);
+    if (btnCancelarAdminUsr) btnCancelarAdminUsr.addEventListener("click", fechar);
+
+    modalAdminUsr.addEventListener("click", (e) => {
+      if (e.target === modalAdminUsr) fechar();
+    });
+
+    if (formAdminUsr) {
+      formAdminUsr.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const nome = document.getElementById("adminUsrNome").value.trim();
+        const email = document.getElementById("adminUsrEmail").value.trim();
+        const matricula = document.getElementById("adminUsrMatricula").value.trim();
+        const cargo = document.getElementById("adminUsrCargo").value;
+        const senha = document.getElementById("adminUsrSenha").value.trim();
+        const campus = document.getElementById("adminUsrCampus").value;
+
+        if (!nome || !email || !matricula || !senha) return;
+
+        const novo = {
+          nome,
+          email,
+          matricula,
+          cargo,
+          status: "ativo",
+          senha,
+          campus,
+          curso: "Análise e Desenvolvimento de Sistemas"
+        };
+
+        if (typeof bancoCadastrarUsuario === "function") {
+          await bancoCadastrarUsuario(novo);
+        }
+
+        fechar();
+        renderizarUsuariosAdmin();
+
+        exibirNotificacao("Usuário Cadastrado", `O usuário "${nome}" foi incluído no sistema com sucesso.`, "success", 4000);
+      });
+    }
+  }
+}
+
+async function renderizarUsuariosPendentesAdmin() {
+  const tbody = document.getElementById("listaPendentesAdminBody");
+  const boxPendentes = document.getElementById("boxPendentesAprovacao");
+  const badgeTotal = document.getElementById("badgeTotalPendentes");
+  const statPendentes = document.getElementById("adminTotalPendentes");
+
+  if (!tbody) return;
+
+  let pendentes = [];
+  if (typeof bancoListarUsuariosPendentes === "function") {
+    pendentes = await bancoListarUsuariosPendentes();
+  }
+
+  tbody.innerHTML = "";
+
+  if (badgeTotal) badgeTotal.textContent = pendentes.length;
+  if (statPendentes) statPendentes.textContent = pendentes.length;
+
+  if (pendentes.length === 0) {
+    if (boxPendentes) boxPendentes.style.display = "none";
+    return;
+  }
+
+  if (boxPendentes) boxPendentes.style.display = "block";
+
+  pendentes.forEach(u => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>
+        <div class="subject-info">
+          <span class="subject-name">${u.nome}</span>
+          <span class="subject-teacher">${u.matricula}</span>
+        </div>
+      </td>
+      <td><code>${u.email}</code></td>
+      <td><strong>${u.matricula}</strong></td>
+      <td class="text-center">${u.campus || "Campus Grand Shopping"}</td>
+      <td class="text-center">
+        <div style="display: inline-flex; gap: 0.4rem; align-items: center; justify-content: center; flex-wrap: wrap;">
+          <button type="button" class="btn-approve-aluno" onclick="aprovarSolicitacaoUsuario('${u.matricula}', 'aluno', '${u.nome.replace(/'/g, "\\'")}')" title="Aprovar e definir como Aluno">
+            🎓 Definir Aluno
+          </button>
+          <button type="button" class="btn-approve-prof" onclick="aprovarSolicitacaoUsuario('${u.matricula}', 'professor', '${u.nome.replace(/'/g, "\\'")}')" title="Aprovar e definir como Professor">
+            👨‍🏫 Definir Professor
+          </button>
+          <button type="button" class="btn-reject-user" onclick="recusarSolicitacaoUsuario('${u.matricula}', '${u.nome.replace(/'/g, "\\'")}')" title="Recusar cadastro">
+            ❌
+          </button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function aprovarSolicitacaoUsuario(matricula, cargo, nome) {
+  if (typeof bancoAprovarUsuario === "function") {
+    await bancoAprovarUsuario(matricula, cargo);
+  }
+
+  await renderizarUsuariosPendentesAdmin();
+  await renderizarUsuariosAdmin();
+
+  const cargoRotulo = cargo === "aluno" ? "Aluno(a)" : "Professor(a)";
+  exibirNotificacao(
+    "Cadastro Aprovado!",
+    `O usuário "${nome}" foi aprovado com sucesso e definido como ${cargoRotulo}. O acesso já está liberado.`,
+    "success",
+    5000
+  );
+}
+
+async function recusarSolicitacaoUsuario(matricula, nome) {
+  const confirmou = confirm(`Deseja realmente recusar a solicitação de cadastro de "${nome}"?`);
+  if (!confirmou) return;
+
+  if (typeof bancoRecusarUsuario === "function") {
+    await bancoRecusarUsuario(matricula);
+  }
+
+  await renderizarUsuariosPendentesAdmin();
+  await renderizarUsuariosAdmin();
+
+  exibirNotificacao("Solicitação Recusada", `A solicitação de "${nome}" foi removida do sistema.`, "info", 4000);
+}
+
+window.renderizarUsuariosPendentesAdmin = renderizarUsuariosPendentesAdmin;
+window.aprovarSolicitacaoUsuario = aprovarSolicitacaoUsuario;
+window.recusarSolicitacaoUsuario = recusarSolicitacaoUsuario;
+
+async function renderizarUsuariosAdmin() {
+  const tbody = document.getElementById("listaUsuariosAdminBody");
+  const statAlunos = document.getElementById("adminTotalAlunos");
+  const statProfs = document.getElementById("adminTotalProfessores");
+  const statDiscs = document.getElementById("adminTotalDisciplinas");
+  const statAvisos = document.getElementById("adminTotalAvisos");
+
+  if (!tbody) return;
+
+  let usuarios = [];
+  if (typeof bancoListarUsuarios === "function") {
+    usuarios = await bancoListarUsuarios();
+  }
+
+  tbody.innerHTML = "";
+
+  let totalAlunos = 0;
+  let totalProfs = 0;
+
+  usuarios.forEach(u => {
+    if (u.cargo === "professor") totalProfs++;
+    else if (u.cargo === "aluno") totalAlunos++;
+
+    let badgeClass = "role-aluno";
+    let badgeText = "Aluno";
+    if (u.cargo === "professor") {
+      badgeClass = "role-professor";
+      badgeText = "Professor";
+    } else if (u.cargo === "admin") {
+      badgeClass = "role-admin";
+      badgeText = "Coordenação";
+    }
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>
+        <div class="subject-info">
+          <span class="subject-name">${u.nome}</span>
+          <span class="subject-teacher">${u.campus || "Campus Grand Shopping"}</span>
+        </div>
+      </td>
+      <td><code>${u.email}</code></td>
+      <td><strong>${u.matricula}</strong></td>
+      <td class="text-center"><span class="badge-role-pill ${badgeClass}">${badgeText}</span></td>
+      <td class="text-center">${u.curso || "ADS"}</td>
+      <td class="text-center">
+        <button type="button" class="btn-excluir-disciplina" onclick="removerUsuarioAdmin('${u.matricula}', '${u.nome.replace(/'/g, "\\'")}')" title="Excluir usuário">
+          🗑️
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  if (statAlunos) statAlunos.textContent = totalAlunos;
+  if (statProfs) statProfs.textContent = totalProfs;
+  if (statDiscs) statDiscs.textContent = obterDisciplinas().length;
+  if (statAvisos) statAvisos.textContent = AVISOS_UNIATENEU.length;
+}
+
+async function removerUsuarioAdmin(matricula, nome) {
+  if (matricula === localStorage.getItem("aluno_matricula")) {
+    exibirNotificacao("Operação Restrita", "Você não pode remover seu próprio usuário logado.", "warning", 3500);
+    return;
+  }
+
+  const confirmou = confirm(`Deseja realmente remover o usuário "${nome}" (${matricula})?`);
+  if (!confirmou) return;
+
+  if (typeof bancoRemoverUsuario === "function") {
+    await bancoRemoverUsuario(matricula);
+  }
+
+  renderizarUsuariosAdmin();
+  exibirNotificacao("Usuário Removido", `O usuário "${nome}" foi excluído do sistema.`, "info", 4000);
+}
+
+window.removerUsuarioAdmin = removerUsuarioAdmin;
+
+function configurarModalAvisos() {
+  const modal = document.getElementById("modalNovoAviso");
+  const btnAbrir = document.getElementById("btnNovoAviso");
+  const btnFechar = document.getElementById("btnFecharModalAvisoPub");
+  const btnCancelar = document.getElementById("btnCancelarModalAvisoPub");
+  const form = document.getElementById("formNovoAviso");
+
+  if (!modal || !btnAbrir) return;
+
+  const fechar = () => {
+    modal.style.display = "none";
+    if (form) form.reset();
+  };
+
+  btnAbrir.addEventListener("click", () => {
+    modal.style.display = "flex";
+  });
+
+  if (btnFechar) btnFechar.addEventListener("click", fechar);
+  if (btnCancelar) btnCancelar.addEventListener("click", fechar);
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) fechar();
+  });
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const titulo = document.getElementById("avisoTituloInput").value.trim();
+      const tag = document.getElementById("avisoTagInput").value.trim();
+      const tipo = document.getElementById("avisoTipoInput").value;
+      const texto = document.getElementById("avisoTextoInput").value.trim();
+
+      if (!titulo || !tag || !texto) return;
+
+      const novoAviso = {
+        id: Date.now(),
+        titulo,
+        tag,
+        tipo,
+        texto,
+        data: "Hoje, " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+      };
+
+      if (typeof bancoAdicionarAviso === "function") {
+        await bancoAdicionarAviso(novoAviso);
+      }
+
+      AVISOS_UNIATENEU.unshift(novoAviso);
+      renderizarAvisosUniAteneu();
+      fechar();
+
+      exibirNotificacao("Comunicado Publicado!", `O aviso "${titulo}" já está visível para toda a instituição.`, "success", 4500);
+    });
+  }
+}
+
+function configurarModalEditarNotas() {
+  const modal = document.getElementById("modalEditarNotas");
+  const btnFechar = document.getElementById("btnFecharModalNotas");
+  const btnCancelar = document.getElementById("btnCancelarModalNotas");
+  const form = document.getElementById("formEditarNotas");
+
+  if (!modal) return;
+
+  const fechar = () => {
+    modal.style.display = "none";
+    if (form) form.reset();
+  };
+
+  if (btnFechar) btnFechar.addEventListener("click", fechar);
+  if (btnCancelar) btnCancelar.addEventListener("click", fechar);
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) fechar();
+  });
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const id = document.getElementById("editDisciplinaId").value;
+      const nota1 = parseFloat(document.getElementById("editNota1").value);
+      const nota2 = parseFloat(document.getElementById("editNota2").value);
+      const frequencia = parseInt(document.getElementById("editFrequencia").value);
+
+      if (isNaN(nota1) || isNaN(nota2) || isNaN(frequencia)) return;
+
+      const lista = obterDisciplinas();
+      const disc = lista.find(d => Number(d.id) === Number(id));
+      if (disc) {
+        disc.nota1 = nota1;
+        disc.nota2 = nota2;
+        disc.frequencia = frequencia;
+        salvarDisciplinas(lista);
+      }
+
+      if (typeof bancoAtualizarDisciplina === "function") {
+        await bancoAtualizarDisciplina(id, { nota1, nota2, frequencia });
+      }
+
+      fechar();
+      exibirNotificacao("Notas Atualizadas", "As notas e frequência foram recalculadas e sincronizadas.", "success", 4000);
+    });
+  }
+}
+
+function abrirModalEditarNotas(id) {
+  const modal = document.getElementById("modalEditarNotas");
+  const lista = obterDisciplinas();
+  const disc = lista.find(d => Number(d.id) === Number(id));
+
+  if (!modal || !disc) return;
+
+  document.getElementById("editDisciplinaId").value = disc.id;
+  document.getElementById("editDisciplinaNome").value = disc.nome;
+  document.getElementById("editNota1").value = disc.nota1;
+  document.getElementById("editNota2").value = disc.nota2;
+  document.getElementById("editFrequencia").value = disc.frequencia || 100;
+
+  modal.style.display = "flex";
+}
+
+window.abrirModalEditarNotas = abrirModalEditarNotas;
 
 const DISCIPLINAS_INICIAIS_UNIATENEU = [
   {
@@ -366,6 +835,7 @@ function renderizarTabelaDisciplinas() {
   const statDisciplinas = document.getElementById("statDisciplinas");
   const statMedia = document.getElementById("statMedia");
   const statPresenca = document.getElementById("statPresenca");
+  const cargo = localStorage.getItem("usuario_cargo") || "aluno";
 
   if (!tbody) return;
 
@@ -422,6 +892,23 @@ function renderizarTabelaDisciplinas() {
 
       const freqClass = freq < 75 ? "badge-freq alerta" : "badge-freq ok";
 
+      let acoesHtml = `
+        <button type="button" class="btn-excluir-disciplina" onclick="removerDisciplina(${item.id})" title="Remover matéria" aria-label="Remover matéria">
+          🗑️
+        </button>
+      `;
+
+      if (cargo === "professor" || cargo === "admin") {
+        acoesHtml = `
+          <button type="button" class="btn-edit-disc-notas" onclick="abrirModalEditarNotas(${item.id})" title="Lançar notas e frequência" aria-label="Lançar notas">
+            ✏️
+          </button>
+          <button type="button" class="btn-excluir-disciplina" onclick="removerDisciplina(${item.id})" title="Remover matéria" aria-label="Remover matéria">
+            🗑️
+          </button>
+        `;
+      }
+
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>
@@ -438,9 +925,7 @@ function renderizarTabelaDisciplinas() {
         <td class="text-center"><strong style="color: var(--ateneu-blue);">${media}</strong></td>
         <td class="text-center"><span class="badge-status ${statusClass}">${statusTexto}</span></td>
         <td class="text-center">
-          <button type="button" class="btn-excluir-disciplina" onclick="removerDisciplina(${item.id})" title="Remover matéria" aria-label="Remover matéria">
-            🗑️
-          </button>
+          ${acoesHtml}
         </td>
       `;
       tbody.appendChild(tr);
@@ -492,6 +977,7 @@ async function inicializarDisciplinas() {
   if (typeof bancoBuscarAvisos === "function") {
     const avisosDb = await bancoBuscarAvisos();
     if (avisosDb && avisosDb.length > 0) {
+      AVISOS_UNIATENEU.splice(0, AVISOS_UNIATENEU.length, ...avisosDb);
       renderizarAvisosUniAteneu(avisosDb);
     }
   }
@@ -529,6 +1015,7 @@ async function inicializarDisciplinas() {
   if (typeof escutarMudancasAvisos === "function") {
     escutarMudancasAvisos((dadosAtualizados, payload) => {
       if (dadosAtualizados && dadosAtualizados.length > 0) {
+        AVISOS_UNIATENEU.splice(0, AVISOS_UNIATENEU.length, ...dadosAtualizados);
         renderizarAvisosUniAteneu(dadosAtualizados);
       }
       let msg = "Mural de avisos atualizado em tempo real pelo banco de dados.";
@@ -713,7 +1200,7 @@ function renderizarAvisosUniAteneu(avisosCustom = null) {
   });
 
   if (statAvisos) {
-    statAvisos.textContent = AVISOS_UNIATENEU.length;
+    statAvisos.textContent = lista.length;
   }
 }
 
